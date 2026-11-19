@@ -141,6 +141,19 @@ p{margin:0}
 @keyframes blink{50%{opacity:0}}
 .duel-tag{position:absolute; right:-6px; top:46%; transform:translateY(-50%) rotate(6deg); background:var(--tux); color:var(--tux-ink); font-family:var(--f-display); font-weight:800; font-size:.8rem; padding:8px 12px; border-radius:8px; box-shadow:var(--shadow); z-index:2}
 
+/* ---------- Navegación ---------- */
+.topnav{display:flex; gap:4px; flex-wrap:wrap; min-width:0}
+.topnav button{appearance:none; cursor:pointer; font:inherit; font-size:.88rem; font-weight:500; color:var(--muted); background:transparent; border:0; border-radius:999px; padding:7px 12px; transition:background .15s ease, color .15s ease}
+.topnav button:hover{color:var(--ink); background:var(--surface)}
+.topnav button[data-go="quiz"], .topnav button[data-go="dequiz"]{color:var(--ink)}
+
+/* ---------- Inicio: elegir test ---------- */
+.chooser{display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:16px}
+.choice{background:var(--surface-2); border:1px solid var(--line); border-radius:var(--r); padding:clamp(20px, 3vw, 30px); display:flex; flex-direction:column; gap:14px; min-width:0}
+.choice h2{font-size:clamp(1.4rem, 2.6vw, 1.9rem); font-weight:700}
+.choice p{color:var(--muted)}
+.choice .cta-row{margin-top:auto}
+
 /* ---------- Escenario del test ---------- */
 .stage-sec{padding-block:8px 72px; scroll-margin-top:16px}
 .stage{
@@ -333,10 +346,13 @@ footer .wrap{display:flex; justify-content:space-between; gap:16px; flex-wrap:wr
 footer code{font-family:var(--f-mono); font-size:.82rem}
 
 /* ---------- Responsive ---------- */
+@media (max-width: 1300px){
+  .top-note{display:none}
+}
 @media (max-width: 920px){
   .hero .wrap{grid-template-columns:1fr; gap:36px}
   .duel{max-width:520px}
-  .intro, .q, .res-grid{grid-template-columns:minmax(0, 1fr)}
+  .intro, .q, .res-grid, .chooser{grid-template-columns:minmax(0, 1fr)}
   .dgrid{grid-template-columns:repeat(2, minmax(0, 1fr))}
   .steps{grid-template-columns:repeat(2, minmax(0, 1fr))}
   .step:last-child{grid-column:1 / -1}
@@ -358,6 +374,9 @@ footer code{font-family:var(--f-mono); font-size:.82rem}
   .stage-head > .mono:last-child{display:none}
   .progress{max-width:none}
   .top-note{display:none}
+  .topnav{flex-wrap:nowrap; overflow-x:auto; width:100%; scrollbar-width:none; margin-inline:-4px}
+  .topnav::-webkit-scrollbar{display:none}
+  .topnav button{white-space:nowrap; flex-shrink:0}
 }
 </style>
 </head>
@@ -365,6 +384,14 @@ footer code{font-family:var(--f-mono); font-size:.82rem}
 <header class="top">
   <div class="wrap">
     <a class="brand" href="#" aria-label="Distrómetro, inicio"><span class="brand-mark">$_</span>Distrómetro</a>
+    <nav class="topnav" aria-label="Secciones">
+      <button type="button" data-go="quiz">Test de distro</button>
+      <button type="button" data-go="dequiz">Test de escritorio</button>
+      <button type="button" data-go="distros">Distros</button>
+      <button type="button" data-go="des">Escritorios</button>
+      <button type="button" data-go="guia">Guía</button>
+      <button type="button" data-go="quejas">Quejas</button>
+    </nav>
     <p class="top-note">Uptime de esta web: <b id="uptime">0 s</b> · reinicios forzados: <b>0</b></p>
   </div>
 </header>
@@ -374,10 +401,11 @@ footer code{font-family:var(--f-mono); font-size:.82rem}
     <div class="hero-copy">
       <span class="eyebrow">Test vocacional para desertores de Windows</span>
       <h1>Encuentra tu <span class="hl">distro de Linux</span> perfecta antes de que Windows se reinicie solo.</h1>
-      <p class="lede">Ocho preguntas, cero cuentas de Microsoft obligatorias. Te decimos qué Linux encaja contigo, cómo es por dentro y dónde bajar la ISO. <strong>Sin anuncios en el menú Inicio</strong>, porque aquí no hay menú Inicio que estropear.</p>
+      <p class="lede">Ocho preguntas, cero cuentas de Microsoft obligatorias. Te decimos qué Linux encaja contigo, cómo es por dentro y dónde bajar la ISO. Y con otras seis, qué escritorio ponerle. <strong>Sin anuncios en el menú Inicio</strong>, porque aquí no hay menú Inicio que estropear.</p>
       <div class="cta-row">
-        <button class="btn btn-primary" id="startHero" type="button">Empezar el test <span aria-hidden="true">→</span></button>
-        <span class="cta-meta">8 preguntas · 2 min · 0 pantallazos azules</span>
+        <button class="btn btn-primary" id="startHero" type="button">Test de distro <span aria-hidden="true">→</span></button>
+        <button class="btn btn-ghost" id="startHeroDE" type="button">Test de escritorio <span aria-hidden="true">→</span></button>
+        <span class="cta-meta">2 minutos cada uno · 0 pantallazos azules</span>
       </div>
     </div>
 
@@ -410,9 +438,9 @@ footer code{font-family:var(--f-mono); font-size:.82rem}
       <div class="stage-body" id="stage" aria-live="polite"></div>
     </div>
     <div class="explore-row" id="exploreRow">
-      <span class="cta-meta">¿Ya tienes distro o prefieres curiosear?</span>
+      <span class="cta-meta">¿Prefieres curiosear sin responder nada?</span>
       <button class="btn btn-ghost" type="button" id="exploreBtn"><span>Explorar las <span id="exploreCount">23</span> distros</span> <span aria-hidden="true">→</span></button>
-      <button class="btn btn-ghost" type="button" id="deBtn"><span>¿Qué escritorio me pega?</span> <span aria-hidden="true">→</span></button>
+      <button class="btn btn-ghost" type="button" id="deBtn"><span>Explorar los <span id="deCount">11</span> escritorios</span> <span aria-hidden="true">→</span></button>
     </div>
   </div>
 </section>
@@ -1060,6 +1088,15 @@ const DE_QUESTIONS = [
     ]
   }
 ];
+/* Capturas de escritorios: las que ya muestra la captura de una distro se reutilizan. */
+const DE_FETCHED = {"mate":{"file":"Mate_Desktop_Ubuntu.png","license":"GPL","author":"Mewtu","w":960,"h":725,"src":"de-mate","note":"MATE en Ubuntu"},"lxqt":{"file":"LXQt_2.0.0_Ambiance_screenshot.png","license":"LGPL","author":"LXQt developers","w":960,"h":540,"src":"de-lxqt"},"budgie":{"file":"Ubuntu_Budgie_25.04_default_desktop_-_English.png","license":"GPL","author":"Ubuntu Budgie Team","w":960,"h":540,"src":"de-budgie","note":"Budgie en Ubuntu Budgie 25.04"},"cosmic":{"file":"COSMIC_Epoch_1.0.0_alpha_with_apps.png","license":"GPLv3","author":"System76","w":960,"h":540,"src":"de-cosmic","note":"Versión alfa de COSMIC"},"hyprland":{"file":"Hyprland_screen.png","license":"CC BY 4.0","author":"Worthymelight","w":960,"h":540,"src":"de-hyprland"},"tiling":{"file":"I3_window_manager_with_default_layout.png","license":"CC BY-SA 4.0","author":"Wikimedia Foundation, Mozilla Foundation, Michael…","w":960,"h":540,"src":"de-tiling","note":"i3 con su disposición en mosaico por defecto"}};
+const DESHOTS = Object.assign({
+  gnome: {...SHOTS.fedora, src:"fedora", note:"GNOME en Fedora Workstation"},
+  kde: {...SHOTS.arch, src:"arch", note:"KDE Plasma 6 en Arch Linux"},
+  cinnamon: {...SHOTS.mint, src:"mint", note:"Cinnamon en Linux Mint"},
+  xfce: {...SHOTS.void, src:"void", note:"Xfce en Void Linux"},
+  pantheon: {...SHOTS.elementary, src:"elementary", note:"Pantheon en elementary OS"}
+}, DE_FETCHED);
 const MAX_DE = {};
 Object.keys(DES).forEach(k => { MAX_DE[k] = DE_QUESTIONS.reduce((sum, q) => sum + Math.max(0, ...q.opts.map(o => o.w[k] || 0)), 0); });
 
@@ -1130,24 +1167,32 @@ function defaultHead(){ setHead('<span class="mono">distrometro --modo=interacti
 
 function renderIntro(){
   view = "intro"; clearTimers(); defaultHead(); exploreRow.hidden = false; clearHash();
+  const nDE = Object.keys(DES).length;
   stage.innerHTML = `
-    <div class="intro fade">
-      <div class="intro-copy">
-        <span class="eyebrow">Cómo funciona</span>
-        <h2>Contesta con sinceridad. Aquí nadie vende tus respuestas.</h2>
-        <p>Comparamos tus respuestas con ${N} distribuciones: desde las que parecen Windows hasta las que se configuran escribiendo código. Al final verás la ganadora, cómo es por dentro, por qué encaja contigo y el enlace a su descarga oficial.</p>
+    <div class="chooser fade">
+      <div class="choice">
+        <span class="eyebrow">Test 1 · ${QUESTIONS.length} preguntas</span>
+        <h2>¿Qué distro de Linux es para ti?</h2>
+        <p>Comparamos tus respuestas con ${N} distribuciones, desde las que parecen Windows hasta las que se configuran escribiendo código. Verás la ganadora, cómo es por dentro y el enlace a su descarga oficial.</p>
         <div class="cta-row">
           <button class="btn btn-primary" id="startStage" type="button">Empezar <span aria-hidden="true">→</span></button>
-          <span class="cta-meta">Puedes volver atrás en cualquier pregunta</span>
+          <button class="linkbtn" id="introCat" type="button">Ver las ${N} distros</button>
         </div>
       </div>
-      <div class="facts">
-        <div class="fact"><b>8</b><span>preguntas</span></div>
-        <div class="fact"><b>${N}</b><span>distros candidatas</span></div>
-        <div class="fact zero"><b>0</b><span>reinicios necesarios</span></div>
+      <div class="choice">
+        <span class="eyebrow">Test 2 · ${DE_QUESTIONS.length} preguntas</span>
+        <h2>¿Y qué escritorio le pongo?</h2>
+        <p>GNOME, KDE Plasma, Cinnamon, Hyprland… Te decimos qué entorno de escritorio o gestor de ventanas va contigo y qué distros lo traen de serie.</p>
+        <div class="cta-row">
+          <button class="btn btn-primary" id="startStageDE" type="button">Empezar <span aria-hidden="true">→</span></button>
+          <button class="linkbtn" id="introDECat" type="button">Ver los ${nDE} escritorios</button>
+        </div>
       </div>
     </div>`;
   document.getElementById("startStage").addEventListener("click", () => start(true));
+  document.getElementById("startStageDE").addEventListener("click", startDE);
+  document.getElementById("introCat").addEventListener("click", () => { renderExplore(); scrollToStage(); });
+  document.getElementById("introDECat").addEventListener("click", () => { renderDEExplore(); scrollToStage(); });
 }
 
 function renderQuestion(focusFirst){
@@ -1307,16 +1352,16 @@ ${shotHTML(k)}
         </div>
       </div>`;
 }
-function shotHTML(k){
-  const S = SHOTS[k];
+function shotFig(S, alt){
   if (!S) return "";
-  const src = S.src || k;
   return `
       <figure class="shot">
-        <img src="shots/${src}.webp" width="${S.w}" height="${S.h}" loading="lazy" decoding="async" alt="Captura del escritorio de ${esc(DISTROS[k].name)}">
+        <img src="shots/${S.src}.webp" width="${S.w}" height="${S.h}" loading="lazy" decoding="async" alt="${esc(alt)}">
         <figcaption>${S.note ? esc(S.note) + " · " : ""}Captura: ${esc(S.author)} · <a href="https://commons.wikimedia.org/wiki/File:${encodeURIComponent(S.file)}" target="_blank" rel="noopener noreferrer">${esc(S.license)}, vía Wikimedia Commons</a></figcaption>
       </figure>`;
 }
+function shotHTML(k){ const S = SHOTS[k]; return S ? shotFig({...S, src:S.src || k}, `Captura del escritorio de ${DISTROS[k].name}`) : ""; }
+function thumbHTML(S){ return S ? `<img class="dthumb" src="shots/${S.src}.webp" width="${S.w}" height="${S.h}" loading="lazy" decoding="async" alt="">` : ""; }
 function diffBar(n, sm){ return `<span class="diff${sm ? " sm" : ""}" aria-hidden="true">${[1,2,3,4,5].map(i => `<i class="${i <= n ? "on" : ""}"></i>`).join("")}</span>`; }
 
 /* ================= Catálogo ================= */
@@ -1349,7 +1394,7 @@ function renderExplore(focusKey){
       <div class="dgrid">
         ${list.map(k => { const D = DISTROS[k]; return `
           <button class="dcard" type="button" data-k="${k}" id="dcard-${k}" style="--d-bg:${D.bg}; --d-fg:${D.fg}">
-            ${SHOTS[k] ? `<img class="dthumb" src="shots/${SHOTS[k].src || k}.webp" width="${SHOTS[k].w}" height="${SHOTS[k].h}" loading="lazy" decoding="async" alt="">` : ""}
+            ${SHOTS[k] ? thumbHTML({...SHOTS[k], src:SHOTS[k].src || k}) : ""}
             <span class="mini${logoCls(k)}" aria-hidden="true">${logo(k)}</span>
             <span><b>${esc(D.name)}</b><small>${esc(D.tagline)}</small>
               <span class="meta">${diffBar(D.diff, true)}<span>${esc(D.base)}</span></span></span>
@@ -1386,31 +1431,26 @@ function renderDetail(k){
   document.getElementById("nextCat").addEventListener("click", () => { renderDetail(next); scrollToStage(); });
 }
 
-/* ================= Resultado del test de escritorio ================= */
-function renderDEResult(idx){
-  view = "deresult"; clearTimers(); exploreRow.hidden = false; clearHash();
-  const rank = ranking();
-  const pickd = rank[idx];
-  const E = DES[pickd.k];
-  const isWinner = idx === 0;
-  const others = rank.filter((_, i) => i !== idx).slice(0, 2).map(r => ({...r, i:rank.indexOf(r)}));
-  setHead(`<span class="mono">${isWinner ? "Resultado: tu escritorio ideal" : "Viendo alternativa"}</span><span class="mono">${esc(E.kind.toLowerCase())}</span>`);
-  stage.innerHTML = `
-    <div class="result fade" style="--d-bg:${E.bg}; --d-fg:${E.fg}">
+/* ================= Escritorios: ficha, resultado, catálogo ================= */
+function deFichaHTML(k, eyebrow, pct){
+  const E = DES[k];
+  const quiz = pct != null;
+  return `
       <div class="res-head">
-        <div class="badge${logoCls(pickd.k)}" aria-hidden="true">${logo(pickd.k)}</div>
+        <div class="badge${logoCls(k)}" aria-hidden="true">${logo(k)}</div>
         <div class="res-title">
-          <span class="eyebrow">${isWinner ? "Tu escritorio ideal es" : `Tu opción nº ${idx + 1}`}</span>
+          <span class="eyebrow">${esc(eyebrow)}</span>
           <h2>${esc(E.name)}</h2>
           <p class="tag">${esc(E.tagline)}</p>
         </div>
-        <div class="match"><b>${pickd.pct}%</b><span>de compatibilidad</span></div>
+        ${quiz ? `<div class="match"><b>${pct}%</b><span>de compatibilidad</span></div>` : `<div class="match"><b>${E.diff}/5</b><span>de dificultad</span></div>`}
       </div>
+${shotFig(DESHOTS[k], `Captura de ${E.name}`)}
       <div class="res-grid">
         <div class="res-text">
           <h3>Cómo es</h3>
           <p>${esc(E.desc)}</p>
-          <h3>Por qué encaja contigo</h3>
+          <h3>${quiz ? "Por qué encaja contigo" : "¿Es para ti?"}</h3>
           <p>${esc(E.why)}</p>
           <div class="rant">
             <span class="rant-label">Lo que Windows nunca te dio</span>
@@ -1418,7 +1458,7 @@ function renderDEResult(idx){
           </div>
           <div class="res-cta">
             <a class="btn btn-primary" href="${E.url}" target="_blank" rel="noopener noreferrer">Web oficial de ${esc(E.name)} <span aria-hidden="true">↗</span></a>
-            <button class="btn btn-ghost" type="button" id="copyRes">Copiar resultado</button>
+            <button class="btn btn-ghost" type="button" id="copyRes">${quiz ? "Copiar resultado" : "Copiar enlace"}</button>
             <span class="toast" id="toast" role="status"></span>
           </div>
         </div>
@@ -1433,11 +1473,25 @@ function renderDEResult(idx){
           </dl>
           <h3>Distros que lo traen</h3>
           <div class="de-distros">
-            ${E.distros.map(k => { const D = DISTROS[k]; return `<button class="de-distro" type="button" data-k="${k}" style="--d-bg:${D.bg}; --d-fg:${D.fg}"><span class="mini${logoCls(k)}" aria-hidden="true">${logo(k)}</span><span>${esc(D.name)}</span></button>`; }).join("")}
+            ${E.distros.map(d => { const D = DISTROS[d]; return `<button class="de-distro" type="button" data-k="${d}" style="--d-bg:${D.bg}; --d-fg:${D.fg}"><span class="mini${logoCls(d)}" aria-hidden="true">${logo(d)}</span><span>${esc(D.name)}</span></button>`; }).join("")}
           </div>
           <p class="de-note">De serie o en una edición oficial. Casi cualquier distro puede instalar cualquier escritorio.</p>
         </div>
-      </div>
+      </div>`;
+}
+function bindDeDistros(){ stage.querySelectorAll(".de-distro").forEach(b => b.addEventListener("click", () => { renderDetail(b.dataset.k); scrollToStage(); })); }
+
+function renderDEResult(idx){
+  view = "deresult"; clearTimers(); exploreRow.hidden = false; clearHash();
+  const rank = ranking();
+  const pickd = rank[idx];
+  const E = DES[pickd.k];
+  const isWinner = idx === 0;
+  const others = rank.filter((_, i) => i !== idx).slice(0, 2).map(r => ({...r, i:rank.indexOf(r)}));
+  setHead(`<span class="mono">${isWinner ? "Resultado: tu escritorio ideal" : "Viendo alternativa"}</span><span class="mono">${esc(E.kind.toLowerCase())}</span>`);
+  stage.innerHTML = `
+    <div class="result fade" style="--d-bg:${E.bg}; --d-fg:${E.fg}">
+      ${deFichaHTML(pickd.k, isWinner ? "Tu escritorio ideal es" : `Tu opción nº ${idx + 1}`, pickd.pct)}
       <div class="alts">
         <h3>${isWinner ? "También te irían bien" : "Otras opciones"}</h3>
         <div class="alt-list">
@@ -1455,10 +1509,77 @@ function renderDEResult(idx){
       </div>
     </div>`;
   stage.querySelectorAll(".alt").forEach(b => b.addEventListener("click", () => { renderDEResult(+b.dataset.i); scrollToStage(); }));
-  stage.querySelectorAll(".de-distro").forEach(b => b.addEventListener("click", () => { renderDetail(b.dataset.k); scrollToStage(); }));
+  bindDeDistros();
   document.getElementById("againDE").addEventListener("click", startDE);
   document.getElementById("toDistroQuiz").addEventListener("click", () => start(true));
   bindFicha(`Según el Distrómetro, mi escritorio de Linux ideal es ${E.name} (${pickd.pct}% de compatibilidad). Haz el test: ${SHARE_BASE}`);
+}
+
+const DE_FILTERS = [
+  {id:"all", label:"Todos", test:() => true},
+  {id:"full", label:"Escritorios completos", test:(E, k) => E.kind.startsWith("Entorno")},
+  {id:"tiling", label:"En mosaico", test:(E, k) => ["hyprland", "tiling", "cosmic"].includes(k)},
+  {id:"light", label:"Ligeros", test:E => E.weight === "Bajo" || E.weight === "Muy bajo"}
+];
+let deFilter = "all";
+const DE_ORDER = Object.keys(DES);
+
+function renderDEExplore(focusKey){
+  view = "deexplore"; clearTimers(); exploreRow.hidden = true; setHash("escritorios");
+  const F = DE_FILTERS.find(f => f.id === deFilter);
+  const list = DE_ORDER.filter(k => F.test(DES[k], k));
+  setHead(`<span class="mono">ls /escritorios --filtro=${deFilter}</span><span class="mono">${list.length} resultados</span>`);
+  stage.innerHTML = `
+    <div class="catalog fade">
+      <div class="cat-head">
+        <div class="cat-title">
+          <span class="eyebrow">Catálogo de escritorios</span>
+          <h2>Los ${DE_ORDER.length} escritorios del Distrómetro</h2>
+          <p>Entornos de escritorio completos y gestores de ventanas en mosaico. Pulsa uno para ver su ficha, una captura y las distros que lo traen.</p>
+        </div>
+        <div class="chips" role="group" aria-label="Filtrar escritorios">
+          ${DE_FILTERS.map(f => `<button class="chip" type="button" id="dechip-${f.id}" data-f="${f.id}" aria-pressed="${f.id === deFilter}">${f.label} <span>${DE_ORDER.filter(k => f.test(DES[k], k)).length}</span></button>`).join("")}
+        </div>
+      </div>
+      <div class="dgrid">
+        ${list.map(k => { const E = DES[k]; return `
+          <button class="dcard" type="button" data-k="${k}" id="decard-${k}" style="--d-bg:${E.bg}; --d-fg:${E.fg}">
+            ${thumbHTML(DESHOTS[k])}
+            <span class="mini${logoCls(k)}" aria-hidden="true">${logo(k)}</span>
+            <span><b>${esc(E.name)}</b><small>${esc(E.tagline)}</small>
+              <span class="meta">${diffBar(E.diff, true)}<span>${esc(E.kind)} · consumo ${esc(E.weight.toLowerCase())}</span></span></span>
+          </button>`; }).join("")}
+      </div>
+      <div class="q-nav">
+        <button class="linkbtn" type="button" id="deToQuiz">Hacer el test de escritorio →</button>
+        <button class="linkbtn" type="button" id="deToDistros">Ver el catálogo de distros →</button>
+      </div>
+    </div>`;
+  stage.querySelectorAll(".chip").forEach(c => c.addEventListener("click", () => { deFilter = c.dataset.f; renderDEExplore(); document.getElementById("dechip-" + deFilter).focus({preventScroll:true}); }));
+  stage.querySelectorAll(".dcard").forEach(c => c.addEventListener("click", () => { renderDEDetail(c.dataset.k); scrollToStage(); }));
+  document.getElementById("deToQuiz").addEventListener("click", startDE);
+  document.getElementById("deToDistros").addEventListener("click", () => { renderExplore(); scrollToStage(); });
+  if (focusKey){ const el = document.getElementById("decard-" + focusKey); el && el.focus({preventScroll:true}); }
+}
+
+function renderDEDetail(k){
+  view = "dedetail"; curKey = k; clearTimers(); exploreRow.hidden = true; setHash(k);
+  const E = DES[k];
+  const i = DE_ORDER.indexOf(k);
+  const next = DE_ORDER[(i + 1) % DE_ORDER.length];
+  setHead(`<span class="mono">cat /escritorios/${k}</span><span class="mono">${i + 1} de ${DE_ORDER.length}</span>`);
+  stage.innerHTML = `
+    <div class="result fade" style="--d-bg:${E.bg}; --d-fg:${E.fg}">
+      ${deFichaHTML(k, "Explorando escritorios")}
+      <div class="q-nav">
+        <button class="linkbtn" type="button" id="backDECat">← Volver a los escritorios</button>
+        <button class="linkbtn" type="button" id="nextDE">Siguiente: ${esc(DES[next].name)} →</button>
+      </div>
+    </div>`;
+  bindDeDistros();
+  bindFicha(`${E.name}, en el Distrómetro: ${SHARE_BASE}#${k}`);
+  document.getElementById("backDECat").addEventListener("click", () => { renderDEExplore(k); scrollToStage(); });
+  document.getElementById("nextDE").addEventListener("click", () => { renderDEDetail(next); scrollToStage(); });
 }
 
 /* ================= Compartir y enlaces ================= */
@@ -1477,13 +1598,15 @@ function bindFicha(text){
 function setHash(h){ if (location.hash.slice(1) !== h) location.hash = h; }
 function clearHash(){
   const h = location.hash.slice(1);
-  if (!h || !(DISTROS[h] || h === "catalogo")) return;
+  if (!h || !(DISTROS[h] || DES[h] || h === "catalogo" || h === "escritorios")) return;
   try { history.replaceState(null, "", location.pathname + location.search); } catch(e){}
 }
 function route(){
   const h = location.hash.slice(1);
   if (DISTROS[h]){ if (!(view === "detail" && curKey === h)) renderDetail(h); return true; }
   if (h === "catalogo"){ if (view !== "explore") renderExplore(); return true; }
+  if (DES[h]){ if (!(view === "dedetail" && curKey === h)) renderDEDetail(h); return true; }
+  if (h === "escritorios"){ if (view !== "deexplore") renderDEExplore(); return true; }
   return false;
 }
 window.addEventListener("hashchange", () => { if (route()) scrollToStage(); });
@@ -1495,7 +1618,17 @@ function reset(){ mode = "distro"; answers = new Array(QUESTIONS.length).fill(nu
 
 document.getElementById("startHero").addEventListener("click", () => start(true));
 document.getElementById("exploreBtn").addEventListener("click", () => { renderExplore(); scrollToStage(); });
-document.getElementById("deBtn").addEventListener("click", startDE);
+document.getElementById("deBtn").addEventListener("click", () => { renderDEExplore(); scrollToStage(); });
+document.getElementById("deCount").textContent = Object.keys(DES).length;
+document.getElementById("startHeroDE").addEventListener("click", startDE);
+document.querySelectorAll(".topnav [data-go]").forEach(b => b.addEventListener("click", () => {
+  const g = b.dataset.go;
+  if (g === "quiz") start(true);
+  else if (g === "dequiz") startDE();
+  else if (g === "distros"){ renderExplore(); scrollToStage(); }
+  else if (g === "des"){ renderDEExplore(); scrollToStage(); }
+  else document.getElementById(g).scrollIntoView({behavior: reduce ? "auto" : "smooth"});
+}));
 document.getElementById("exploreCount").textContent = N;
 document.getElementById("startWall").addEventListener("click", e => { e.preventDefault(); start(true); });
 document.addEventListener("keydown", e => {
