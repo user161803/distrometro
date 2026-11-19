@@ -1,0 +1,838 @@
+<title>Distrómetro</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: una columna editorial; hero a dos columnas (titular | ventanas "Windows Update vs. terminal"),
+   un "escenario" central donde vive el test y el resultado, y un muro de quejas en azul pantallazo. */
+:root{
+  --bg:#EEF0F4;
+  --surface:#FFFFFF;
+  --surface-2:#F6F7FA;
+  --ink:#141826;
+  --muted:#596078;
+  --line:#D6DAE4;
+  --tux:#F2A900;        /* el pico del pingüino: acento principal */
+  --tux-ink:#1C1400;
+  --tux-soft:#FFF3D1;
+  --bsod:#1E5BC6;       /* azul pantallazo: solo para las quejas de Windows */
+  --bsod-ink:#FFFFFF;
+  --bsod-soft:#E3ECFB;
+  --term:#151924;
+  --term-ink:#E6E9F2;
+  --term-green:#7BD88F;
+  --shadow:0 1px 0 rgba(20,24,38,.04), 0 12px 32px -12px rgba(20,24,38,.18);
+  --f-display:"Unbounded", "Arial Black", system-ui, sans-serif;
+  --f-body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1016; --surface:#161922; --surface-2:#1B1F2A; --ink:#ECEEF4; --muted:#9BA2B8; --line:#2A2F3D;
+    --tux:#FFBA1F; --tux-ink:#1C1400; --tux-soft:#2E2610;
+    --bsod:#3A74E0; --bsod-ink:#FFFFFF; --bsod-soft:#17233C;
+    --term:#0A0C11; --term-ink:#E6E9F2; --term-green:#7BD88F;
+    --shadow:0 1px 0 rgba(0,0,0,.3), 0 16px 40px -16px rgba(0,0,0,.6);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1016; --surface:#161922; --surface-2:#1B1F2A; --ink:#ECEEF4; --muted:#9BA2B8; --line:#2A2F3D;
+  --tux:#FFBA1F; --tux-ink:#1C1400; --tux-soft:#2E2610;
+  --bsod:#3A74E0; --bsod-ink:#FFFFFF; --bsod-soft:#17233C;
+  --term:#0A0C11; --term-ink:#E6E9F2; --term-green:#7BD88F;
+  --shadow:0 1px 0 rgba(0,0,0,.3), 0 16px 40px -16px rgba(0,0,0,.6);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important} }
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:var(--f-body); font-size:16px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{
+  max-width:1120px; margin:0 auto;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--tux); outline-offset:3px; border-radius:6px}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.08; letter-spacing:-.02em}
+p{margin:0}
+.mono{font-family:var(--f-mono)}
+.eyebrow{font-family:var(--f-mono); font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+
+/* ---------- Header ---------- */
+.top{padding-block:22px}
+.top .wrap{display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap}
+.brand{display:flex; align-items:center; gap:10px; text-decoration:none; font-family:var(--f-display); font-weight:700; font-size:1.05rem; letter-spacing:-.01em}
+.brand-mark{width:34px; height:34px; border-radius:10px; background:var(--ink); color:var(--tux); display:grid; place-items:center; font-family:var(--f-mono); font-weight:600; font-size:.95rem}
+.top-note{font-family:var(--f-mono); font-size:.8rem; color:var(--muted)}
+.top-note b{color:var(--ink); font-weight:600}
+
+/* ---------- Hero ---------- */
+.hero{padding-block:28px 56px}
+.hero .wrap{display:grid; grid-template-columns:1.15fr .85fr; gap:48px; align-items:center}
+.hero-copy{min-width:0; display:flex; flex-direction:column; gap:22px}
+.hero h1{font-size:clamp(2.1rem, 5.2vw, 3.9rem); font-weight:800}
+.hero h1 .hl{background:linear-gradient(transparent 62%, var(--tux) 62%, var(--tux) 92%, transparent 92%); padding-inline:.06em}
+.lede{font-size:1.12rem; color:var(--muted); max-width:34em}
+.lede strong{color:var(--ink); font-weight:600}
+.cta-row{display:flex; gap:14px; align-items:center; flex-wrap:wrap}
+.btn{
+  appearance:none; border:0; cursor:pointer; text-decoration:none;
+  display:inline-flex; align-items:center; gap:10px;
+  font-family:var(--f-body); font-weight:600; font-size:1rem;
+  padding:14px 22px; border-radius:999px;
+  transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+}
+.btn-primary{background:var(--tux); color:var(--tux-ink); box-shadow:0 6px 0 -1px color-mix(in srgb, var(--tux) 55%, #000)}
+.btn-primary:hover{transform:translateY(-2px)}
+.btn-primary:active{transform:translateY(3px); box-shadow:0 2px 0 -1px color-mix(in srgb, var(--tux) 55%, #000)}
+.btn-ghost{background:transparent; color:var(--ink); border:1.5px solid var(--line)}
+.btn-ghost:hover{border-color:var(--ink)}
+.cta-meta{font-family:var(--f-mono); font-size:.82rem; color:var(--muted)}
+
+/* Ventanas del hero */
+.duel{min-width:0; display:grid; gap:18px; position:relative}
+.win{border-radius:12px; overflow:hidden; box-shadow:var(--shadow)}
+.win-bar{display:flex; align-items:center; gap:8px; padding:9px 12px; font-family:var(--f-mono); font-size:.74rem}
+.dots{display:flex; gap:6px}
+.dots i{width:10px; height:10px; border-radius:50%; background:currentColor; opacity:.35; display:block}
+.upd{background:var(--bsod); color:var(--bsod-ink)}
+.upd .win-bar{background:color-mix(in srgb, var(--bsod) 80%, #000)}
+.upd-body{padding:26px 22px 24px; display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center}
+.spinner{width:36px; height:36px; position:relative}
+.spinner i{position:absolute; inset:0; display:block}
+.spinner i::before{content:""; position:absolute; top:0; left:50%; width:5px; height:5px; margin-left:-2.5px; border-radius:50%; background:currentColor}
+.spinner i{animation:orbit 1.8s cubic-bezier(.5,.15,.4,.85) infinite}
+.spinner i:nth-child(2){animation-delay:.12s} .spinner i:nth-child(3){animation-delay:.24s} .spinner i:nth-child(4){animation-delay:.36s} .spinner i:nth-child(5){animation-delay:.48s}
+@keyframes orbit{to{transform:rotate(360deg)}}
+.upd-title{font-size:1.02rem; font-weight:500}
+.upd-pct{font-family:var(--f-mono); font-size:2rem; font-weight:600; font-variant-numeric:tabular-nums; line-height:1}
+.upd-small{font-size:.82rem; opacity:.82}
+.term{background:var(--term); color:var(--term-ink); font-family:var(--f-mono); font-size:.84rem; border:1px solid color-mix(in srgb, var(--term-ink) 10%, transparent)}
+.term .win-bar{color:color-mix(in srgb, var(--term-ink) 60%, transparent); border-bottom:1px solid color-mix(in srgb, var(--term-ink) 8%, transparent)}
+.term-body{padding:14px 16px 16px; display:flex; flex-direction:column; gap:3px; min-height:142px}
+.term-body .p{color:var(--tux)}
+.term-body .ok{color:var(--term-green)}
+.term-body .dim{color:color-mix(in srgb, var(--term-ink) 55%, transparent)}
+.caret{display:inline-block; width:.6em; height:1.05em; vertical-align:-.15em; background:var(--term-ink); animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.duel-tag{position:absolute; right:-6px; top:46%; transform:translateY(-50%) rotate(6deg); background:var(--tux); color:var(--tux-ink); font-family:var(--f-display); font-weight:800; font-size:.8rem; padding:8px 12px; border-radius:8px; box-shadow:var(--shadow); z-index:2}
+
+/* ---------- Escenario del test ---------- */
+.stage-sec{padding-block:8px 72px; scroll-margin-top:16px}
+.stage{
+  background:var(--surface); border:1px solid var(--line); border-radius:22px; box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.stage-head{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 22px; border-bottom:1px solid var(--line); background:var(--surface-2); flex-wrap:wrap}
+.stage-head .mono{font-size:.8rem; color:var(--muted)}
+.stage-body{padding:clamp(22px, 4vw, 44px)}
+
+/* Intro */
+.intro{display:grid; grid-template-columns:1fr 1fr; gap:36px; align-items:center}
+.intro > *{min-width:0}
+.intro h2{font-size:clamp(1.6rem, 3.2vw, 2.3rem); font-weight:700}
+.intro-copy{display:flex; flex-direction:column; gap:16px}
+.intro-copy p{color:var(--muted); max-width:32em}
+.facts{display:grid; grid-template-columns:repeat(3, 1fr); gap:12px}
+.fact{background:var(--surface-2); border:1px solid var(--line); border-radius:var(--r); padding:16px}
+.fact b{display:block; font-family:var(--f-display); font-size:1.7rem; font-weight:700; font-variant-numeric:tabular-nums; line-height:1.1}
+.fact span{font-size:.84rem; color:var(--muted)}
+.fact.zero b{color:var(--tux)}
+@supports (color: color-mix(in srgb, red, blue)){ .fact.zero b{color:color-mix(in srgb, var(--tux) 75%, var(--ink))} }
+
+/* Progreso */
+.progress{display:flex; align-items:center; gap:12px; min-width:0; flex:1; max-width:520px}
+.bar{flex:1; height:8px; border-radius:99px; background:var(--line); overflow:hidden}
+.bar i{display:block; height:100%; width:0; background:var(--tux); border-radius:99px; transition:width .35s ease}
+.progress .mono{white-space:nowrap; font-variant-numeric:tabular-nums}
+
+/* Pregunta */
+.q{display:grid; grid-template-columns:minmax(0, 1.6fr) minmax(0, 1fr); gap:36px; align-items:start}
+.q-main{display:flex; flex-direction:column; gap:22px; min-width:0}
+.q-num{font-family:var(--f-mono); font-size:.82rem; color:var(--muted)}
+.q h2{font-size:clamp(1.4rem, 2.8vw, 2rem); font-weight:700}
+.opts{display:grid; gap:10px}
+.opt{
+  appearance:none; text-align:left; cursor:pointer; width:100%;
+  display:grid; grid-template-columns:34px 1fr; gap:14px; align-items:center;
+  background:var(--surface); color:var(--ink); border:1.5px solid var(--line); border-radius:var(--r);
+  padding:14px 16px; font:inherit; font-size:1rem; line-height:1.4;
+  transition:border-color .15s ease, background .15s ease, transform .15s ease;
+}
+.opt:hover{border-color:var(--ink); transform:translateX(3px)}
+.opt .k{width:34px; height:34px; border-radius:9px; display:grid; place-items:center; font-family:var(--f-mono); font-weight:600; font-size:.85rem; background:var(--surface-2); border:1px solid var(--line)}
+.opt.picked{border-color:var(--tux); background:var(--tux-soft)}
+.opt.picked .k{background:var(--tux); color:var(--tux-ink); border-color:var(--tux)}
+.opt small{display:block; color:var(--muted); font-size:.85rem; margin-top:2px}
+.q-nav{display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap}
+.linkbtn{appearance:none; background:none; border:0; padding:6px 0; font:inherit; font-family:var(--f-mono); font-size:.85rem; color:var(--muted); cursor:pointer; text-decoration:underline; text-underline-offset:3px}
+.linkbtn:hover{color:var(--ink)}
+.linkbtn[disabled]{visibility:hidden}
+
+/* Cuadro de queja (pantallazo azul) */
+.rant{background:var(--bsod); color:var(--bsod-ink); border-radius:var(--r); padding:22px; display:flex; flex-direction:column; gap:12px; min-width:0}
+.rant .sad{font-family:var(--f-body); font-size:3rem; line-height:1; font-weight:400}
+.rant .rant-label{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em; text-transform:uppercase; opacity:.8}
+.rant p{font-size:1rem; line-height:1.5}
+.rant .stop{font-family:var(--f-mono); font-size:.74rem; opacity:.75; word-break:break-all}
+
+/* Cargando */
+.loading{max-width:640px; margin:0 auto}
+.loading .term{border-radius:12px; overflow:hidden}
+.loading .term-body{min-height:250px; font-size:.88rem}
+
+/* Resultado */
+.result{display:flex; flex-direction:column; gap:32px}
+.res-head{display:grid; grid-template-columns:auto 1fr auto; gap:24px; align-items:center}
+.res-head > *{min-width:0}
+.badge{width:96px; height:96px; border-radius:24px; display:grid; place-items:center; font-family:var(--f-display); font-weight:800; font-size:2rem; letter-spacing:-.04em; background:var(--d-bg); color:var(--d-fg); box-shadow:inset 0 -6px 0 rgba(0,0,0,.14)}
+.res-title{display:flex; flex-direction:column; gap:8px}
+.res-title h2{font-size:clamp(2rem, 5vw, 3.4rem); font-weight:800}
+.res-title .tag{font-size:1.1rem; color:var(--muted)}
+.match{text-align:right}
+.match b{display:block; font-family:var(--f-display); font-size:2.6rem; font-weight:700; line-height:1; font-variant-numeric:tabular-nums}
+.match span{font-family:var(--f-mono); font-size:.78rem; color:var(--muted)}
+.res-grid{display:grid; grid-template-columns:minmax(0, 1.5fr) minmax(0, 1fr); gap:32px; align-items:start}
+.res-text{display:flex; flex-direction:column; gap:18px}
+.res-text h3{font-family:var(--f-body); font-size:.8rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.res-text p{font-size:1.06rem; max-width:38em}
+.specs{margin:0; display:grid; gap:0; border:1px solid var(--line); border-radius:var(--r); overflow:hidden}
+.specs div{display:grid; grid-template-columns:9.5em 1fr; gap:12px; padding:11px 16px; border-top:1px solid var(--line); align-items:baseline}
+.specs div:first-child{border-top:0}
+.specs dt{font-family:var(--f-mono); font-size:.78rem; color:var(--muted)}
+.specs dd{margin:0; font-weight:500; min-width:0}
+.diff{display:inline-flex; gap:5px; vertical-align:middle; margin-right:8px}
+.diff i{width:16px; height:7px; border-radius:3px; background:var(--line); display:block}
+.diff i.on{background:var(--tux)}
+.res-cta{display:flex; flex-wrap:wrap; gap:12px; align-items:center}
+.cmd{display:flex; align-items:center; gap:10px; background:var(--term); color:var(--term-ink); font-family:var(--f-mono); font-size:.84rem; padding:12px 14px; border-radius:10px; overflow-x:auto; white-space:nowrap}
+.cmd .p{color:var(--tux)}
+.alts h3{font-family:var(--f-body); font-size:.8rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:12px}
+.alt-list{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+.alt{appearance:none; cursor:pointer; text-align:left; font:inherit; color:var(--ink); background:var(--surface-2); border:1.5px solid var(--line); border-radius:var(--r); padding:14px; display:grid; grid-template-columns:44px 1fr auto; gap:12px; align-items:center; transition:border-color .15s ease}
+.alt:hover{border-color:var(--ink)}
+.alt .mini{width:44px; height:44px; border-radius:12px; display:grid; place-items:center; font-family:var(--f-display); font-weight:800; font-size:.95rem; background:var(--d-bg); color:var(--d-fg)}
+.alt b{display:block; font-weight:600}
+.alt small{color:var(--muted); font-size:.82rem; display:block; line-height:1.35}
+.alt .pct{font-family:var(--f-mono); font-size:.85rem; font-variant-numeric:tabular-nums; color:var(--muted)}
+.toast{font-family:var(--f-mono); font-size:.82rem; color:var(--muted)}
+
+.fade{animation:fadeup .35s ease both}
+@keyframes fadeup{from{opacity:.0; transform:translateY(8px)} to{opacity:1; transform:none}}
+
+/* ---------- Muro de las lamentaciones ---------- */
+.wall{padding-block:72px; background:var(--bsod); color:var(--bsod-ink)}
+.wall-head{display:flex; flex-direction:column; gap:14px; margin-bottom:36px; max-width:46em}
+.wall-head .eyebrow{color:var(--bsod-ink); opacity:.8}
+.wall h2{font-size:clamp(1.8rem, 4vw, 2.8rem); font-weight:800}
+.wall-head p{opacity:.9; font-size:1.06rem}
+.gripes{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:14px}
+.gripe{border:1px solid rgba(255,255,255,.28); border-radius:var(--r); padding:20px; display:flex; flex-direction:column; gap:10px; background:rgba(255,255,255,.06)}
+.gripe .code{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.04em; opacity:.75}
+.gripe h3{font-family:var(--f-body); font-size:1.08rem; font-weight:600; letter-spacing:0; line-height:1.3}
+.gripe p{font-size:.95rem; opacity:.88; line-height:1.5}
+.gripe .fix{margin-top:auto; padding-top:10px; border-top:1px dashed rgba(255,255,255,.3); font-family:var(--f-mono); font-size:.8rem}
+.gripe .fix b{color:#FFD766; font-weight:600}
+.wall-foot{margin-top:32px; display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; align-items:center; font-family:var(--f-mono); font-size:.85rem}
+.wall-foot .qr{display:flex; align-items:center; gap:12px; opacity:.85}
+.qr-box{width:46px; height:46px; background:
+  conic-gradient(from 90deg at 33% 33%, #fff 25%, transparent 0) 0 0/12px 12px, rgba(255,255,255,.15); border-radius:4px}
+.btn-light{background:#fff; color:var(--bsod)}
+.btn-light:hover{transform:translateY(-2px)}
+
+footer{padding-block:32px; font-size:.88rem; color:var(--muted)}
+footer .wrap{display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap}
+footer code{font-family:var(--f-mono); font-size:.82rem}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 920px){
+  .hero .wrap{grid-template-columns:1fr; gap:36px}
+  .duel{max-width:520px}
+  .intro, .q, .res-grid{grid-template-columns:1fr}
+  .gripes{grid-template-columns:repeat(2, minmax(0,1fr))}
+}
+@media (max-width: 620px){
+  .gripes, .alt-list{grid-template-columns:1fr}
+  .facts{grid-template-columns:repeat(3, minmax(0,1fr)); gap:8px}
+  .fact{padding:12px}
+  .fact b{font-size:1.35rem}
+  .res-head{grid-template-columns:auto 1fr; gap:16px}
+  .badge{width:72px; height:72px; border-radius:18px; font-size:1.5rem}
+  .match{grid-column:1 / -1; text-align:left; display:flex; align-items:baseline; gap:10px}
+  .match b{display:inline; font-size:2rem}
+  .specs div{grid-template-columns:1fr; gap:2px}
+  .duel-tag{right:6px}
+  .stage-head{padding:12px 16px}
+  .stage-head > .mono:last-child{display:none}
+  .progress{max-width:none}
+  .top-note{display:none}
+}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#" aria-label="Distrómetro, inicio"><span class="brand-mark">$_</span>Distrómetro</a>
+    <p class="top-note">Uptime de esta web: <b id="uptime">0 s</b> · reinicios forzados: <b>0</b></p>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-copy">
+      <span class="eyebrow">Test vocacional para desertores de Windows</span>
+      <h1>Encuentra tu <span class="hl">distro de Linux</span> perfecta antes de que Windows se reinicie solo.</h1>
+      <p class="lede">Ocho preguntas, cero cuentas de Microsoft obligatorias. Te decimos qué Linux encaja contigo, cómo es por dentro y dónde bajar la ISO. <strong>Sin anuncios en el menú Inicio</strong>, porque aquí no hay menú Inicio que estropear.</p>
+      <div class="cta-row">
+        <button class="btn btn-primary" id="startHero" type="button">Empezar el test <span aria-hidden="true">→</span></button>
+        <span class="cta-meta">8 preguntas · 2 min · 0 pantallazos azules</span>
+      </div>
+    </div>
+
+    <div class="duel" aria-hidden="true">
+      <div class="win upd">
+        <div class="win-bar"><span class="dots"><i></i><i></i><i></i></span><span>actualización obligatoria (otra)</span></div>
+        <div class="upd-body">
+          <div class="spinner"><i></i><i></i><i></i><i></i><i></i></div>
+          <p class="upd-title">Trabajando en las actualizaciones</p>
+          <p class="upd-pct"><span id="updPct">27</span>%</p>
+          <p class="upd-small" id="updMsg">No apagues el equipo. Ni lo mires fijamente.</p>
+        </div>
+      </div>
+      <span class="duel-tag">VS</span>
+      <div class="win term">
+        <div class="win-bar"><span class="dots"><i></i><i></i><i></i></span><span>tú@libre: ~</span></div>
+        <div class="term-body" id="heroTerm"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="stage-sec" id="test">
+  <div class="wrap">
+    <div class="stage">
+      <div class="stage-head" id="stageHead">
+        <span class="mono">distrometro --modo=interactivo</span>
+        <span class="mono">sin telemetría, prometido</span>
+      </div>
+      <div class="stage-body" id="stage" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<section class="wall" id="quejas">
+  <div class="wrap">
+    <div class="wall-head">
+      <span class="eyebrow">:( Tu PC se ha encontrado con un problema</span>
+      <h2>El muro de las lamentaciones de Windows</h2>
+      <p>Recopilamos las quejas más frecuentes de quienes ya cruzaron al otro lado. Cada una viene con su remedio linuxero, para que la rabia sirva de algo.</p>
+    </div>
+    <div class="gripes" id="gripes"></div>
+    <div class="wall-foot">
+      <div class="qr"><span class="qr-box"></span><span>Código de detención: DEMASIADAS_EXCUSAS</span></div>
+      <a class="btn btn-light" href="#test" id="startWall">Liberar mi PC <span aria-hidden="true">→</span></a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>Distrómetro. Hecho sin reiniciar ni una sola vez.</span>
+    <code>uptime: lo que dure tu paciencia con Windows</code>
+  </div>
+</footer>
+
+<script>
+(() => {
+"use strict";
+
+/* ================= Datos ================= */
+const DISTROS = {
+  mint: {
+    name:"Linux Mint", mono:"Mi", bg:"#86BE43", fg:"#132006",
+    tagline:"El Windows 7 que siempre quisiste, sin la caducidad.",
+    desc:"Mint es la puerta de entrada favorita de quien llega desde Windows. El escritorio Cinnamon tiene barra de tareas, menú de aplicaciones y bandeja del sistema donde esperas encontrarlos. Trae códecs, gestor de controladores y un centro de software con todo lo habitual. Se instala, se actualiza cuando tú quieres y luego se olvida de que existe.",
+    why:"Quieres que el ordenador funcione y no aprender un sistema operativo nuevo. Mint te deja aterrizar suave y tener el mismo flujo de siempre, pero sin que nadie te pida iniciar sesión con una cuenta para usar tu propio PC.",
+    vs:"Las actualizaciones te preguntan antes. Te PREGUNTAN. Puedes decir que no y no pasa nada.",
+    base:"Ubuntu LTS", desktop:"Cinnamon (también MATE y Xfce)", pkg:"APT + Flatpak", cycle:"Cada ~6 meses sobre LTS de 5 años", diff:1,
+    cmd:"sudo apt install vlc", url:"https://linuxmint.com/download.php"
+  },
+  ubuntu: {
+    name:"Ubuntu", mono:"Ub", bg:"#E95420", fg:"#FFFFFF",
+    tagline:"La distro que tu tutorial de YouTube da por hecho que usas.",
+    desc:"Ubuntu es la distribución más conocida y la que más guías, foros y respuestas tiene en internet. Su escritorio GNOME personalizado es limpio, con un dock lateral. Las versiones LTS reciben soporte durante años, y casi cualquier programa para Linux tiene un paquete pensado para ella antes que para nadie.",
+    why:"Copias comandos de foros y esperas que funcionen. En Ubuntu funcionan, porque el foro casi seguro estaba escrito para Ubuntu. Es la opción con más red de seguridad del mundo Linux.",
+    vs:"Cuando algo falla, el mensaje de error se puede buscar y tiene respuesta. Nada de «0x80070643» y un enlace roto.",
+    base:"Debian", desktop:"GNOME (con variantes Kubuntu, Xubuntu…)", pkg:"APT + Snap", cycle:"Cada 6 meses; LTS cada 2 años", diff:1,
+    cmd:"sudo apt update && sudo apt upgrade", url:"https://ubuntu.com/download/desktop"
+  },
+  zorin: {
+    name:"Zorin OS", mono:"Zo", bg:"#15A6F0", fg:"#031A26",
+    tagline:"Parece Windows. Se porta mucho mejor que Windows.",
+    desc:"Zorin está diseñada para que alguien que nunca ha tocado Linux no note el cambio. Trae disposiciones de escritorio que imitan Windows y macOS con un clic, un acabado visual muy cuidado y soporte para instalar algunos programas .exe sin pelearse. Ideal para regalar a familiares.",
+    why:"Te importa la estética y la familiaridad. Con Zorin el cambio dura una tarde y lo único que echarás de menos es la publicidad del menú Inicio. O sea, nada.",
+    vs:"Puedes ponerle la barra de tareas donde quieras. Arriba, a la izquierda, en diagonal si te apetece. Nadie te lo va a bloquear.",
+    base:"Ubuntu LTS", desktop:"GNOME muy personalizado", pkg:"APT + Flatpak + Snap", cycle:"Cada ~2 años sobre LTS", diff:1,
+    cmd:"sudo apt install gimp", url:"https://zorin.com/os/download/"
+  },
+  elementary: {
+    name:"elementary OS", mono:"el", bg:"#64BAFF", fg:"#06213A",
+    tagline:"Minimalismo de diseño, sin pagar el precio de la manzana.",
+    desc:"elementary es la distro más obsesionada con el diseño. Su escritorio Pantheon es sobrio, coherente y tranquilo, con aplicaciones propias hechas a medida y una tienda AppCenter de pago voluntario. Todo encaja visualmente y nada te interrumpe.",
+    why:"Buscas algo bonito y tranquilo que no te bombardee con opciones ni con notificaciones. elementary decide por ti en las cosas pequeñas para que tú te concentres en lo tuyo.",
+    vs:"Ninguna notificación te sugiere «probar Edge». Tampoco aparecen noticias de famosos en la barra de tareas.",
+    base:"Ubuntu LTS", desktop:"Pantheon", pkg:"APT + Flatpak (AppCenter)", cycle:"Versiones mayores cada ~2 años", diff:1,
+    cmd:"flatpak install appcenter com.github.app", url:"https://elementary.io/"
+  },
+  fedora: {
+    name:"Fedora Workstation", mono:"Fe", bg:"#3C6EB4", fg:"#FFFFFF",
+    tagline:"Software reciente sin vivir al borde del precipicio.",
+    desc:"Fedora ofrece GNOME casi tal cual lo diseñan sus autores, con versiones muy actuales del kernel y las herramientas, pero probadas con cuidado. Está patrocinada por Red Hat, así que lo que estrena Fedora suele acabar siendo el estándar de la industria años después. Es la favorita de muchos desarrolladores.",
+    why:"Quieres tecnología moderna y un sistema serio para trabajar o programar, sin pasarte la vida arreglando cosas. Fedora es el punto dulce entre lo nuevo y lo estable.",
+    vs:"Un `dnf upgrade` tarda menos que un «Preparando Windows, no apagues el equipo». Bastante menos.",
+    base:"Independiente (upstream de RHEL)", desktop:"GNOME (también KDE Plasma)", pkg:"DNF (RPM) + Flatpak", cycle:"Cada 6 meses", diff:2,
+    cmd:"sudo dnf upgrade --refresh", url:"https://fedoraproject.org/workstation/download"
+  },
+  pop: {
+    name:"Pop!_OS", mono:"Po", bg:"#48B9C7", fg:"#06262A",
+    tagline:"Para quien trabaja, programa y juega en la misma máquina.",
+    desc:"Pop!_OS la mantiene System76, un fabricante de ordenadores Linux, y se nota: trae una ISO con los controladores de NVIDIA ya incluidos, un escritorio COSMIC propio con mosaico automático de ventanas y atajos de teclado pensados para trabajar rápido.",
+    why:"Usas el PC para todo: código, juegos, edición. Pop te da los controladores resueltos desde el primer minuto y un gestor de ventanas en mosaico que, una vez lo pruebas, no sueltas.",
+    vs:"Los controladores gráficos vienen instalados. No hace falta descargar 800 MB de un «panel de experiencia» que te pide iniciar sesión.",
+    base:"Ubuntu LTS", desktop:"COSMIC", pkg:"APT + Flatpak", cycle:"Sigue las LTS de Ubuntu", diff:2,
+    cmd:"sudo apt install steam", url:"https://system76.com/pop/download/"
+  },
+  bazzite: {
+    name:"Bazzite", mono:"Bz", bg:"#8B5CF6", fg:"#FFFFFF",
+    tagline:"Una consola de videojuegos con alma de PC.",
+    desc:"Bazzite es una distro inmutable basada en Fedora Atomic y pensada para jugar. Trae Steam, Proton, controladores, Gamescope y mandos configurados de serie. El sistema base es de solo lectura y se actualiza en bloque: si una actualización sale mal, eliges la imagen anterior al arrancar y listo.",
+    why:"Tu PC es para jugar y quieres que los juegos simplemente arranquen. Bazzite está montada para eso, desde el portátil hasta la torre con luces RGB.",
+    vs:"Ninguna actualización te reinicia a mitad de partida clasificatoria. Y si una actualización rompe algo, se deshace en un reinicio.",
+    base:"Fedora Atomic (Universal Blue)", desktop:"KDE Plasma o GNOME", pkg:"Flatpak + imágenes rpm-ostree", cycle:"Continuo, por imágenes", diff:2,
+    cmd:"ujust update", url:"https://bazzite.gg/"
+  },
+  manjaro: {
+    name:"Manjaro", mono:"Mj", bg:"#35BF5C", fg:"#06200E",
+    tagline:"La potencia de Arch, con red de seguridad incluida.",
+    desc:"Manjaro toma la base de Arch Linux y le añade instalador gráfico, gestión de controladores y un retraso de un par de semanas en los paquetes para pulir errores. Tienes acceso a la AUR, el repositorio comunitario con prácticamente cualquier programa que exista.",
+    why:"Quieres software reciente y el catálogo enorme de Arch, pero instalarlo a mano desde una terminal no es tu idea de un sábado divertido.",
+    vs:"El escritorio no te reinstala OneDrive cada vez que lo desinstalas.",
+    base:"Arch Linux", desktop:"KDE Plasma, GNOME o Xfce", pkg:"Pacman + AUR (pamac)", cycle:"Continuo, con pausas de prueba", diff:3,
+    cmd:"pamac install obs-studio", url:"https://manjaro.org/download/"
+  },
+  opensuse: {
+    name:"openSUSE Tumbleweed", mono:"Su", bg:"#73BA25", fg:"#0F1E03",
+    tagline:"Lo último, pero pasando antes por el control de calidad.",
+    desc:"Tumbleweed es una rolling release que prueba cada instantánea con openQA antes de publicarla. Trae Btrfs con Snapper, así que cada actualización deja un punto de restauración al que volver desde el menú de arranque. YaST te deja configurar casi todo con ventanas.",
+    why:"Te gusta estar a la última y trastear, pero quieres un botón de deshacer de verdad, no un «Restaurar sistema» que tarda una hora y falla.",
+    vs:"Los puntos de restauración funcionan. Lo repetimos porque cuesta creerlo: funcionan.",
+    base:"Independiente", desktop:"KDE Plasma (también GNOME)", pkg:"Zypper (RPM) + Flatpak", cycle:"Continuo, probado con openQA", diff:3,
+    cmd:"sudo zypper dup", url:"https://get.opensuse.org/tumbleweed/"
+  },
+  debian: {
+    name:"Debian", mono:"De", bg:"#D70A53", fg:"#FFFFFF",
+    tagline:"Estable como una roca. Literalmente se usa en servidores que nadie toca en años.",
+    desc:"Debian es una de las distros más antiguas y la madre de Ubuntu, Mint y cientos más. La gestiona una comunidad de voluntarios con un contrato social público. Su versión estable cambia poco y despacio, y precisamente por eso no da sustos.",
+    why:"Valoras la estabilidad y la libertad del software por encima de las novedades. Quieres instalarlo, configurarlo una vez y que siga igual dentro de cinco años.",
+    vs:"Nadie decide desde una oficina que tu sistema necesita un asistente de IA que no pediste.",
+    base:"Independiente", desktop:"A elegir: GNOME, KDE, Xfce…", pkg:"APT (.deb)", cycle:"Estable cada ~2 años", diff:3,
+    cmd:"sudo apt full-upgrade", url:"https://www.debian.org/download"
+  },
+  mx: {
+    name:"MX Linux", mono:"MX", bg:"#2E3A4E", fg:"#FFFFFF",
+    tagline:"Resucita ese portátil que Windows 11 declaró «no compatible».",
+    desc:"MX Linux es ligera, rápida y muy completa. Usa Xfce sobre una base Debian estable y trae una colección de herramientas propias (MX Tools) para configurar el sistema sin terminal. Arranca en ordenadores con poca RAM y procesadores que ya peinan canas.",
+    why:"Tienes un ordenador perfectamente útil al que Windows ha condenado por no tener un chip TPM. MX lo devuelve a la vida y lo hace ir más rápido que el día que lo compraste.",
+    vs:"Arranca con 2 GB de RAM y aún le sobra. Windows con 2 GB de RAM es un salvapantallas carísimo.",
+    base:"Debian estable", desktop:"Xfce (también KDE y Fluxbox)", pkg:"APT + MX Package Installer", cycle:"Sigue a Debian estable", diff:2,
+    cmd:"sudo apt install firefox-esr", url:"https://mxlinux.org/download-links/"
+  },
+  arch: {
+    name:"Arch Linux", mono:"Ar", bg:"#1793D1", fg:"#FFFFFF",
+    tagline:"Tú montas cada pieza. Y luego lo cuentas en todas partes.",
+    desc:"Arch te da un sistema mínimo y tú decides todo lo demás: escritorio, servicios, cada paquete. Es rolling release, así que siempre tienes lo último. Su wiki es la mejor documentación del mundo Linux y la consulta hasta gente que usa otras distros.",
+    why:"Te gusta entender cómo funciona cada cosa y que el sistema sea exactamente lo que quieres, ni un paquete más. El ratón es opcional; la curiosidad, no.",
+    vs:"Instalas lo que quieres y solo lo que quieres. Cero Candy Crush preinstalado, cero «sugerencias».",
+    base:"Independiente", desktop:"El que tú instales", pkg:"Pacman + AUR", cycle:"Continuo (rolling)", diff:5,
+    cmd:"sudo pacman -Syu", url:"https://archlinux.org/download/"
+  },
+  nixos: {
+    name:"NixOS", mono:"Nx", bg:"#7EBAE4", fg:"#0A2234",
+    tagline:"Tu sistema operativo es un archivo de configuración. Y puedes volver atrás en el tiempo.",
+    desc:"En NixOS describes todo el sistema en un archivo declarativo y Nix lo construye de forma reproducible. Cada cambio crea una generación nueva que puedes elegir al arrancar. Puedes clonar tu configuración en otra máquina y tener exactamente el mismo sistema en minutos.",
+    why:"Piensas como un ingeniero: quieres que tu sistema sea reproducible, versionado en git y a prueba de «en mi máquina funcionaba». Hay curva de aprendizaje, pero lo que hay al final no tiene equivalente.",
+    vs:"Si algo se rompe, eliges la generación anterior en el arranque. Sin formatear, sin «Reparación automática» en bucle.",
+    base:"Independiente", desktop:"El que declares", pkg:"Nix (más de 100.000 paquetes)", cycle:"Semestral o unstable", diff:5,
+    cmd:"sudo nixos-rebuild switch", url:"https://nixos.org/download/"
+  }
+};
+
+const QUESTIONS = [
+  {
+    q:"¿Qué relación tienes con la terminal?",
+    rant:"Windows tiene tres terminales distintas (CMD, PowerShell y Terminal) y ninguna se pone de acuerdo con las otras en cómo se borra un archivo.",
+    opts:[
+      {t:"¿La qué? ¿Lo de los hackers de película?", s:"Prefiero clics, gracias.", w:{mint:3, zorin:3, elementary:2, ubuntu:2, mx:1}},
+      {t:"Copio y pego comandos de foros y rezo", s:"A veces funciona.", w:{ubuntu:3, pop:2, mint:2, manjaro:2, bazzite:1, fedora:1}},
+      {t:"Me defiendo. Sé salir de vim (casi siempre)", s:"Esc, :q!, y respiro.", w:{fedora:3, debian:2, opensuse:2, manjaro:2, pop:1, mx:1}},
+      {t:"Vivo en ella. El ratón es decorativo", s:"Mis alias tienen alias.", w:{arch:3, nixos:3, debian:1, opensuse:1}}
+    ]
+  },
+  {
+    q:"¿Qué ordenador vas a liberar?",
+    rant:"Windows 11 exige TPM 2.0 y procesadores recientes. Millones de equipos que funcionan perfectamente se convierten en basura electrónica por decreto.",
+    opts:[
+      {t:"Un portátil de hace 10 años", s:"Windows 11 me dijo que «no es compatible». Él tampoco me cae bien.", w:{mx:4, debian:2, mint:2}},
+      {t:"Un PC normal, de los que cumplen", s:"Ni lento ni un cohete.", w:{mint:2, ubuntu:2, zorin:2, fedora:1, elementary:2}},
+      {t:"Una bestia gamer con gráfica que suena a avión", s:"RGB incluido.", w:{bazzite:4, pop:2, manjaro:1, arch:1}},
+      {t:"Un portátil nuevo y reluciente", s:"Aún huele a plástico.", w:{fedora:3, ubuntu:2, pop:2, elementary:1, opensuse:1}}
+    ]
+  },
+  {
+    q:"¿Para qué lo vas a usar sobre todo?",
+    rant:"Windows trae preinstalados juegos, noticias, el tiempo, un asistente de IA y una tienda. Lo que no trae es la opción de no tenerlos.",
+    opts:[
+      {t:"Navegar, ofimática y series", s:"Lo normal de la vida.", w:{mint:3, zorin:3, elementary:2, ubuntu:2, mx:1}},
+      {t:"Jugar", s:"Steam abierto 24/7.", w:{bazzite:4, pop:3, manjaro:1}},
+      {t:"Programar y desarrollar", s:"Docker, Python, y mil pestañas.", w:{fedora:3, pop:2, arch:2, nixos:2, opensuse:2, ubuntu:1}},
+      {t:"Cacharrear, servidores, homelab", s:"Tengo una Raspberry en cada cajón.", w:{debian:4, nixos:2, arch:1, opensuse:1}}
+    ]
+  },
+  {
+    q:"¿Qué aspecto quieres que tenga tu escritorio?",
+    rant:"En Windows 11 ya no puedes mover la barra de tareas a un lateral. Una función de 1995 eliminada en 2021. Progreso.",
+    opts:[
+      {t:"Que se parezca a Windows, pero sin lo malo", s:"Barra abajo, menú a la izquierda.", w:{zorin:3, mint:3, mx:1}},
+      {t:"Elegante y minimalista, tipo Mac", s:"Sin pagar 2.000 € por él.", w:{elementary:4, fedora:1, pop:1}},
+      {t:"Moderno y limpio, con su propio estilo", s:"Sorpréndeme, pero con gusto.", w:{fedora:2, ubuntu:2, pop:2, bazzite:1}},
+      {t:"Lo voy a personalizar hasta el último píxel", s:"Mi escritorio, mis reglas.", w:{arch:3, manjaro:2, opensuse:2, nixos:1}}
+    ]
+  },
+  {
+    q:"¿Cómo te gustan las actualizaciones?",
+    rant:"«Tu dispositivo se reiniciará en 15 minutos.» Lo dice mientras tienes abierta la presentación que no has guardado. Siempre ese día.",
+    opts:[
+      {t:"Lo último de lo último, aunque algo explote", s:"Vivo en la versión beta de la vida.", w:{arch:3, opensuse:3, manjaro:1, fedora:1}},
+      {t:"Recientes, pero bien probadas", s:"Lo nuevo, cuando funcione.", w:{fedora:3, bazzite:2, pop:1, ubuntu:1}},
+      {t:"Estable como una roca. Que nada cambie en años", s:"Si funciona, no lo toques.", w:{debian:3, mint:2, mx:2, ubuntu:1}},
+      {t:"Me da igual, mientras no me interrumpan", s:"Que pasen en silencio y sin sustos.", w:{mint:2, zorin:2, elementary:2, bazzite:2, ubuntu:1}}
+    ]
+  },
+  {
+    q:"¿Qué es lo que más te saca de quicio de Windows?",
+    rant:"Pregunta difícil: la lista es tan larga que tenemos un muro entero dedicado a ella. Más abajo, cuando termines.",
+    opts:[
+      {t:"Que se reinicie cuando le da la gana", s:"Adiós, 47 pestañas.", w:{mint:2, debian:2, bazzite:2, nixos:1}},
+      {t:"La telemetría: siento que me observan", s:"Porque te observan.", w:{debian:3, arch:1, fedora:1, mx:1, nixos:1}},
+      {t:"Que vaya lento aunque no esté haciendo nada", s:"«Antimalware Service Executable», 40 % de CPU.", w:{mx:3, arch:1, debian:1, manjaro:1}},
+      {t:"Los anuncios en el menú Inicio. En el menú Inicio.", s:"Pagué una licencia para ver publicidad.", w:{elementary:2, zorin:2, mint:2, ubuntu:1, fedora:1}}
+    ]
+  },
+  {
+    q:"¿Qué filosofía va contigo?",
+    rant:"La filosofía de Windows: tu ordenador es tuyo, pero la cuenta de Microsoft, el navegador por defecto y las actualizaciones las elegimos nosotros.",
+    opts:[
+      {t:"Que funcione y punto", s:"No vine aquí a hacer política.", w:{ubuntu:2, mint:2, zorin:2, pop:2, bazzite:1}},
+      {t:"Software libre, los principios por delante", s:"Mis cuatro libertades no se tocan.", w:{debian:4, fedora:2}},
+      {t:"Hazlo tú mismo y entiende cada pieza", s:"Aprender es parte de la diversión.", w:{arch:4, nixos:1, manjaro:1, opensuse:1}},
+      {t:"Mi sistema es código: declarativo y reproducible", s:"Si no está en git, no existe.", w:{nixos:4, bazzite:1, fedora:1}}
+    ]
+  },
+  {
+    q:"Algo se ha roto. ¿Qué haces?",
+    rant:"Solución oficial de Windows: «Algo salió mal. Inténtalo de nuevo más tarde.» Más tarde, cuándo. De nuevo, qué. Salió mal, el qué.",
+    opts:[
+      {t:"Llamo a mi sobrino", s:"Es el informático de la familia.", w:{mint:3, zorin:3, elementary:2, ubuntu:1}},
+      {t:"Busco el error en internet", s:"Alguien en 2014 tuvo el mismo problema.", w:{ubuntu:3, pop:2, manjaro:2, fedora:1}},
+      {t:"Me leo la wiki entera y disfruto el proceso", s:"Arreglarlo es la mitad de la gracia.", w:{arch:3, opensuse:1, debian:2}},
+      {t:"Vuelvo a la versión anterior y aquí no ha pasado nada", s:"Ctrl+Z para el sistema entero.", w:{nixos:3, opensuse:3, bazzite:2, fedora:1}}
+    ]
+  }
+];
+
+const GRIPES = [
+  {code:"0x0000REINICIO", h:"Se reinicia cuando quiere", p:"Tienes 30 pestañas abiertas y un documento sin guardar. Windows ha decidido que es un buen momento.", fix:"Linux: <b>tú decides</b> cuándo reiniciar. Muchas actualizaciones ni lo necesitan."},
+  {code:"0x00000ADS", h:"Publicidad en tu propio sistema", p:"Sugerencias en el menú Inicio, en la pantalla de bloqueo y en el Explorador. Pagaste la licencia para recibir anuncios.", fix:"Linux: <b>cero anuncios</b>. Ni uno. Por sistema."},
+  {code:"0x000000TPM", h:"Tu PC «no es compatible»", p:"El ordenador funciona de maravilla, pero Windows 11 lo da por muerto porque no tiene el chip que toca.", fix:"Linux: <b>funciona en hardware de hace 15 años</b> y en el de mañana."},
+  {code:"0x0000CUENTA", h:"Cuenta online obligatoria", p:"Para instalar el sistema en tu propio ordenador te piden iniciar sesión en internet. Hay trucos para evitarlo, y los van cerrando.", fix:"Linux: creas un <b>usuario local</b> y listo. No hace falta correo."},
+  {code:"0x00TELEMETRIA", h:"Telemetría por defecto", p:"Datos de uso, diagnósticos, actividad. Puedes reducirla, pero desactivarla del todo no es una opción que te den.", fix:"Linux: la mayoría de distros <b>no recogen nada</b>, y las que preguntan, preguntan."},
+  {code:"0x000BLOATWARE", h:"Programas que nadie pidió", p:"Juegos de caramelos, noticias, un asistente de IA en cada esquina y apps que vuelven tras desinstalarlas.", fix:"Linux: instalas <b>lo que quieres</b> desde un gestor de paquetes. Fin."},
+  {code:"0x00000000LENTO", h:"Lento sin motivo aparente", p:"El disco al 100 % sin abrir nada. Un proceso con nombre críptico se come la CPU. El ventilador despega.", fix:"Linux: un escritorio ligero arranca con <b>menos de 1 GB de RAM</b>."},
+  {code:"0x0000000EXE", h:"Instalar es una aventura", p:"Buscar la web, esquivar el botón falso de descarga, siguiente, siguiente, desmarcar la barra de herramientas, siguiente.", fix:"Linux: <b>un comando o un clic</b> en la tienda, y se actualiza solo con el resto."},
+  {code:"0x00000LICENCIA", h:"Cuesta dinero y aún así…", p:"Pagas por una licencia de un sistema que te muestra anuncios, recoge datos y decide cuándo reiniciar.", fix:"Linux: <b>gratis</b>, libre y sin letra pequeña."}
+];
+
+/* ================= Estado ================= */
+const LETTERS = ["A","B","C","D"];
+let answers = new Array(QUESTIONS.length).fill(null);
+let cur = 0;
+let view = "intro";
+let timers = [];
+const stage = document.getElementById("stage");
+const head = document.getElementById("stageHead");
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function clearTimers(){ timers.forEach(clearTimeout); timers = []; }
+function later(fn, ms){ const t = setTimeout(fn, ms); timers.push(t); return t; }
+
+/* ================= Puntuación ================= */
+const MAX = {};
+Object.keys(DISTROS).forEach(k => {
+  MAX[k] = QUESTIONS.reduce((sum, q) => sum + Math.max(0, ...q.opts.map(o => o.w[k] || 0)), 0);
+});
+function ranking(){
+  const score = {};
+  Object.keys(DISTROS).forEach(k => score[k] = 0);
+  answers.forEach((a, i) => { if (a == null) return; const w = QUESTIONS[i].opts[a].w; for (const k in w) score[k] += w[k]; });
+  const list = Object.keys(DISTROS).map(k => {
+    const ratio = MAX[k] ? score[k] / MAX[k] : 0;
+    return {k, score:score[k], ratio};
+  });
+  list.sort((a, b) => b.score - a.score || b.ratio - a.ratio);
+  const top = list[0].score || 1;
+  list.forEach((d, i) => {
+    // Porcentaje de afinidad: mezcla de cuánto encaja en absoluto y respecto al ganador.
+    const rel = d.score / top;
+    d.pct = Math.max(12, Math.min(99, Math.round(48 + 30 * d.ratio + 21 * rel)));
+  });
+  for (let i = 1; i < list.length; i++) if (list[i].pct >= list[i-1].pct) list[i].pct = list[i-1].pct - 1;
+  return list;
+}
+
+/* ================= Vistas ================= */
+function setHead(html){ head.innerHTML = html; }
+function defaultHead(){ setHead('<span class="mono">distrometro --modo=interactivo</span><span class="mono">sin telemetría, prometido</span>'); }
+
+function renderIntro(){
+  view = "intro"; clearTimers(); defaultHead();
+  stage.innerHTML = `
+    <div class="intro fade">
+      <div class="intro-copy">
+        <span class="eyebrow">Cómo funciona</span>
+        <h2>Contesta con sinceridad. Aquí nadie vende tus respuestas.</h2>
+        <p>Comparamos tus respuestas con 13 distribuciones: desde las que parecen Windows hasta las que se configuran escribiendo código. Al final verás la ganadora, cómo es por dentro, por qué encaja contigo y el enlace a su descarga oficial.</p>
+        <div class="cta-row">
+          <button class="btn btn-primary" id="startStage" type="button">Empezar <span aria-hidden="true">→</span></button>
+          <span class="cta-meta">Puedes volver atrás en cualquier pregunta</span>
+        </div>
+      </div>
+      <div class="facts">
+        <div class="fact"><b>8</b><span>preguntas</span></div>
+        <div class="fact"><b>13</b><span>distros candidatas</span></div>
+        <div class="fact zero"><b>0</b><span>reinicios necesarios</span></div>
+      </div>
+    </div>`;
+  document.getElementById("startStage").addEventListener("click", () => start(true));
+}
+
+function renderQuestion(focusFirst){
+  view = "q"; clearTimers();
+  const Q = QUESTIONS[cur];
+  const pct = Math.round(cur / QUESTIONS.length * 100);
+  setHead(`<div class="progress"><span class="mono">Instalando libertad</span><span class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="${QUESTIONS.length}" aria-valuenow="${cur}" aria-label="Progreso del test"><i style="width:${pct}%"></i></span><span class="mono">${pct}%</span></div><span class="mono">sin pantallazos azules</span>`);
+  stage.innerHTML = `
+    <div class="q fade">
+      <div class="q-main">
+        <span class="q-num">Pregunta ${cur + 1} de ${QUESTIONS.length}</span>
+        <h2 id="qTitle">${esc(Q.q)}</h2>
+        <div class="opts" role="group" aria-labelledby="qTitle">
+          ${Q.opts.map((o, i) => `
+            <button class="opt${answers[cur] === i ? " picked" : ""}" type="button" data-i="${i}" id="opt-${cur}-${i}" aria-pressed="${answers[cur] === i}">
+              <span class="k">${LETTERS[i]}</span>
+              <span>${esc(o.t)}<small>${esc(o.s)}</small></span>
+            </button>`).join("")}
+        </div>
+        <div class="q-nav">
+          <button class="linkbtn" type="button" id="back" ${cur === 0 ? "disabled" : ""}>← Pregunta anterior</button>
+          <button class="linkbtn" type="button" id="restart">Empezar de nuevo</button>
+        </div>
+      </div>
+      <aside class="rant" aria-label="Mientras tanto, en Windows">
+        <span class="sad" aria-hidden="true">:(</span>
+        <span class="rant-label">Mientras tanto, en Windows</span>
+        <p>${esc(Q.rant)}</p>
+        <span class="stop">Código de detención: PREGUNTA_${cur + 1}_SIN_RESPUESTA_DE_SOPORTE</span>
+      </aside>
+    </div>`;
+  stage.querySelectorAll(".opt").forEach(b => b.addEventListener("click", () => pick(+b.dataset.i)));
+  document.getElementById("back").addEventListener("click", () => { if (cur > 0){ cur--; renderQuestion(true); } });
+  document.getElementById("restart").addEventListener("click", reset);
+  if (focusFirst){ const f = stage.querySelector(".opt.picked") || stage.querySelector(".opt"); f && f.focus({preventScroll:true}); }
+}
+
+function pick(i){
+  if (view !== "q") return;
+  answers[cur] = i;
+  stage.querySelectorAll(".opt").forEach(b => { const on = +b.dataset.i === i; b.classList.toggle("picked", on); b.setAttribute("aria-pressed", on); });
+  view = "picking";
+  later(() => {
+    if (cur < QUESTIONS.length - 1){ cur++; renderQuestion(true); }
+    else renderLoading();
+  }, reduce ? 120 : 380);
+}
+
+function renderLoading(){
+  view = "loading"; clearTimers();
+  setHead(`<div class="progress"><span class="mono">Instalando libertad</span><span class="bar"><i style="width:100%"></i></span><span class="mono">100%</span></div><span class="mono">calculando…</span>`);
+  const winner = DISTROS[ranking()[0].k];
+  const lines = [
+    ['<span class="p">$</span> distrometro --analizar respuestas.txt', 0],
+    ['<span class="dim">[ 0.12s]</span> Leyendo tus 8 respuestas… <span class="ok">ok</span>', 380],
+    ['<span class="dim">[ 0.31s]</span> Desinstalando juego de caramelos preinstalado… <span class="ok">ok</span>', 750],
+    ['<span class="dim">[ 0.48s]</span> Desactivando telemetría… <span class="ok">no había ninguna</span>', 1100],
+    ['<span class="dim">[ 0.66s]</span> Buscando al asistente que nadie pidió… <span class="ok">no encontrado (bien)</span>', 1450],
+    ['<span class="dim">[ 0.81s]</span> Comparando con 13 distribuciones… <span class="ok">ok</span>', 1800],
+    [`<span class="dim">[ 0.94s]</span> Coincidencia máxima: <span class="p">${esc(winner.name)}</span>`, 2150],
+    ['<span class="dim">[ 0.95s]</span> Reinicio necesario: <span class="ok">no</span>', 2450]
+  ];
+  stage.innerHTML = `<div class="loading fade"><div class="win term"><div class="win-bar"><span class="dots"><i></i><i></i><i></i></span><span>tú@libre: ~</span></div><div class="term-body" id="loadTerm"></div></div></div>`;
+  const box = document.getElementById("loadTerm");
+  const total = reduce ? 0 : 1;
+  lines.forEach(([html, t]) => later(() => { const d = document.createElement("div"); d.innerHTML = html; box.appendChild(d); }, t * total));
+  later(() => renderResult(0), reduce ? 250 : 2950);
+}
+
+function renderResult(idx){
+  view = "result"; clearTimers();
+  const rank = ranking();
+  const pickd = rank[idx];
+  const D = DISTROS[pickd.k];
+  const isWinner = idx === 0;
+  const others = rank.filter((_, i) => i !== idx).slice(0, 2).map(r => ({...r, i:rank.indexOf(r)}));
+  setHead(`<span class="mono">${isWinner ? "Resultado: tu distro perfecta" : "Viendo alternativa"}</span><span class="mono">reinicio necesario: no</span>`);
+  stage.innerHTML = `
+    <div class="result fade" style="--d-bg:${D.bg}; --d-fg:${D.fg}">
+      <div class="res-head">
+        <div class="badge" aria-hidden="true">${esc(D.mono)}</div>
+        <div class="res-title">
+          <span class="eyebrow">${isWinner ? "Tu distro perfecta es" : `Tu opción nº ${idx + 1}`}</span>
+          <h2>${esc(D.name)}</h2>
+          <p class="tag">${esc(D.tagline)}</p>
+        </div>
+        <div class="match"><b>${pickd.pct}%</b><span>de compatibilidad</span></div>
+      </div>
+
+      <div class="res-grid">
+        <div class="res-text">
+          <h3>Cómo es</h3>
+          <p>${esc(D.desc)}</p>
+          <h3>Por qué encaja contigo</h3>
+          <p>${esc(D.why)}</p>
+          <div class="rant">
+            <span class="rant-label">Lo que Windows nunca te dio</span>
+            <p>${esc(D.vs)}</p>
+          </div>
+          <div class="res-cta">
+            <a class="btn btn-primary" href="${D.url}" target="_blank" rel="noopener noreferrer">Descargar la ISO de ${esc(D.name)} <span aria-hidden="true">↗</span></a>
+            <button class="btn btn-ghost" type="button" id="copyRes">Copiar resultado</button>
+            <span class="toast" id="toast" role="status"></span>
+          </div>
+        </div>
+        <div class="res-text">
+          <h3>Ficha técnica</h3>
+          <dl class="specs">
+            <div><dt>Basada en</dt><dd>${esc(D.base)}</dd></div>
+            <div><dt>Escritorio</dt><dd>${esc(D.desktop)}</dd></div>
+            <div><dt>Paquetes</dt><dd>${esc(D.pkg)}</dd></div>
+            <div><dt>Lanzamientos</dt><dd>${esc(D.cycle)}</dd></div>
+            <div><dt>Dificultad</dt><dd><span class="diff" aria-hidden="true">${[1,2,3,4,5].map(n => `<i class="${n <= D.diff ? "on" : ""}"></i>`).join("")}</span>${D.diff} de 5</dd></div>
+          </dl>
+          <h3>Tu primer comando</h3>
+          <div class="cmd"><span class="p">$</span><span>${esc(D.cmd)}</span></div>
+        </div>
+      </div>
+
+      <div class="alts">
+        <h3>${isWinner ? "También te irían bien" : "Otras opciones"}</h3>
+        <div class="alt-list">
+          ${(isWinner ? others : [{...rank[0], i:0}, others.find(o => o.i !== 0)]).filter(Boolean).slice(0,2).map(o => { const A = DISTROS[o.k]; return `
+            <button class="alt" type="button" data-i="${o.i}" style="--d-bg:${A.bg}; --d-fg:${A.fg}">
+              <span class="mini" aria-hidden="true">${esc(A.mono)}</span>
+              <span><b>${esc(A.name)}${o.i === 0 ? " · tu ganadora" : ""}</b><small>${esc(A.tagline)}</small></span>
+              <span class="pct">${o.pct}%</span>
+            </button>`; }).join("")}
+        </div>
+      </div>
+
+      <div class="q-nav">
+        <button class="linkbtn" type="button" id="again">↺ Repetir el test</button>
+        <button class="linkbtn" type="button" id="toWall">Leer el muro de quejas de Windows ↓</button>
+      </div>
+    </div>`;
+  stage.querySelectorAll(".alt").forEach(b => b.addEventListener("click", () => { renderResult(+b.dataset.i); scrollToStage(); }));
+  document.getElementById("again").addEventListener("click", reset);
+  document.getElementById("toWall").addEventListener("click", () => document.getElementById("quejas").scrollIntoView({behavior: reduce ? "auto" : "smooth"}));
+  document.getElementById("copyRes").addEventListener("click", () => {
+    const text = `Según el Distrómetro, mi distro de Linux perfecta es ${D.name} (${pickd.pct}% de compatibilidad). Windows, no eres tú, soy yo. Bueno, eres tú.`;
+    const toast = document.getElementById("toast");
+    const ok = () => { toast.textContent = "Copiado al portapapeles"; };
+    const fail = () => { toast.textContent = text; const r = document.createRange(); r.selectNodeContents(toast); const s = getSelection(); s.removeAllRanges(); s.addRange(r); };
+    try { navigator.clipboard.writeText(text).then(ok, fail); } catch(e){ fail(); }
+  });
+}
+
+function scrollToStage(){ document.getElementById("test").scrollIntoView({behavior: reduce ? "auto" : "smooth", block:"start"}); }
+function start(scroll){ answers = new Array(QUESTIONS.length).fill(null); cur = 0; renderQuestion(true); if (scroll) scrollToStage(); }
+function reset(){ answers = new Array(QUESTIONS.length).fill(null); cur = 0; renderIntro(); scrollToStage(); }
+
+document.getElementById("startHero").addEventListener("click", () => start(true));
+document.getElementById("startWall").addEventListener("click", e => { e.preventDefault(); start(true); });
+document.addEventListener("keydown", e => {
+  if (view !== "q" || e.altKey || e.ctrlKey || e.metaKey) return;
+  const tag = (e.target.tagName || "").toLowerCase(); if (tag === "input" || tag === "textarea") return;
+  const k = e.key.toUpperCase();
+  const idx = LETTERS.indexOf(k) >= 0 ? LETTERS.indexOf(k) : ["1","2","3","4"].indexOf(k);
+  if (idx >= 0){ e.preventDefault(); pick(idx); }
+});
+
+/* ================= Muro ================= */
+document.getElementById("gripes").innerHTML = GRIPES.map(g => `
+  <article class="gripe">
+    <span class="code">${esc(g.code)}</span>
+    <h3>${esc(g.h)}</h3>
+    <p>${esc(g.p)}</p>
+    <p class="fix">${g.fix}</p>
+  </article>`).join("");
+
+/* ================= Hero: Windows Update vs. terminal ================= */
+const pctEl = document.getElementById("updPct");
+const msgEl = document.getElementById("updMsg");
+const msgs = ["No apagues el equipo. Ni lo mires fijamente.", "Esto puede tardar un rato. O el resto de la tarde.", "Casi listo. (No.)", "Configurando cosas que no pediste…", "Deshaciendo los cambios que acabamos de hacer…"];
+let p = 27, mi = 0;
+if (!reduce){
+  setInterval(() => {
+    if (Math.random() < .18){ p = Math.max(3, p - Math.ceil(Math.random() * 20)); mi = (mi + 1) % msgs.length; msgEl.textContent = msgs[mi]; }
+    else if (p < 99) p += Math.random() < .5 ? 1 : 0;
+    if (p >= 99){ p = 30; msgEl.textContent = "Reiniciando… para seguir actualizando."; }
+    pctEl.textContent = p;
+  }, 700);
+}
+const ht = document.getElementById("heroTerm");
+const heroLines = [
+  '<span class="p">$</span> sudo apt upgrade',
+  '<span class="dim">Leyendo lista de paquetes… Hecho</span>',
+  '<span class="dim">Se actualizarán 23 paquetes.</span>',
+  '<span class="ok">✓ Listo en 14 s. Sin reiniciar.</span>',
+  '<span class="p">$</span> <span class="caret"></span>'
+];
+if (reduce){ ht.innerHTML = heroLines.map(l => `<div>${l}</div>`).join(""); }
+else {
+  const play = () => { ht.innerHTML = ""; heroLines.forEach((l, i) => setTimeout(() => { const d = document.createElement("div"); d.innerHTML = l; ht.appendChild(d); }, 300 + i * 650)); };
+  play(); setInterval(play, 9000);
+}
+
+/* Uptime */
+const t0 = Date.now(), up = document.getElementById("uptime");
+setInterval(() => { const s = Math.floor((Date.now() - t0) / 1000); up.textContent = s < 60 ? `${s} s` : `${Math.floor(s/60)} min ${s % 60} s`; }, 1000);
+
+renderIntro();
+})();
+</script>
