@@ -196,6 +196,10 @@ p{margin:0}
   padding:14px 16px; font:inherit; font-size:1rem; line-height:1.4;
   transition:border-color .15s ease, background .15s ease, transform .15s ease;
 }
+.q-help{margin-top:-10px; color:var(--muted); font-size:.98rem; max-width:40em}
+.opts.multi .opt .k{border-radius:6px; font-size:1rem}
+.multi-next{display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+.btn[disabled]{opacity:.45; cursor:not-allowed; transform:none}
 .opt:hover{border-color:var(--ink); transform:translateX(3px)}
 .opt .k{width:34px; height:34px; border-radius:9px; display:grid; place-items:center; font-family:var(--f-mono); font-weight:600; font-size:.85rem; background:var(--surface-2); border:1px solid var(--line)}
 .opt.picked{border-color:var(--tux); background:var(--tux-soft)}
@@ -845,122 +849,130 @@ function logoCls(k){ const L = LOGOS[k] || {}; return (L.full ? " full" : "") + 
 
 const QUESTIONS = [
   {
-    q:"¿Qué relación tienes con la terminal?",
+    q:"¿Has usado alguna vez la consola de comandos?",
+    help:"Es esa ventana negra donde se escriben órdenes con el teclado, como el «Símbolo del sistema» o PowerShell en Windows.",
     rant:"Windows tiene tres terminales distintas (CMD, PowerShell y Terminal) y ninguna se pone de acuerdo con las otras en cómo se borra un archivo.",
     opts:[
-      {t:"¿La qué? ¿Lo de los hackers de película?", s:"Prefiero clics, gracias.", w:{mint:3, zorin:3, linuxlite:3, elementary:2, ubuntu:2, kubuntu:2, mx:1, puppy:1}, d:{cinnamon:2, kde:1, gnome:1, xfce:1, pantheon:1, budgie:1, mate:1}},
-      {t:"Copio y pego comandos de foros y rezo", s:"A veces funciona.", w:{ubuntu:3, pop:2, mint:2, kubuntu:2, manjaro:2, bazzite:1, fedora:1, ubuntustudio:1, tails:1, nobara:1, rpi:1}, d:{gnome:1, kde:1, cinnamon:1, cosmic:1, budgie:1}},
-      {t:"Me defiendo. Sé salir de vim (casi siempre)", s:"Esc, :q!, y respiro.", w:{fedora:3, endeavour:3, cachyos:2, debian:2, opensuse:2, manjaro:2, almalinux:2, kali:1, pop:1, mx:1, garuda:1, silverblue:1, asahi:1}, d:{kde:1, xfce:1, cosmic:1, openbox:1, gnome:1, labwc:1}},
-      {t:"Vivo en ella. El ratón es decorativo", s:"Mis alias tienen alias.", w:{arch:3, nixos:3, gentoo:3, void:3, kali:2, alpine:2, slackware:2, qubes:2, debian:1, opensuse:1}, d:{tiling:2, hyprland:2, niri:2, dwm:2, bspwm:2, awesome:2, qtile:2}}
+      {t:"Nunca, y prefiero que siga así", s:"Yo uso el ratón, gracias.", w:{mint:3, zorin:3, linuxlite:3, elementary:2, ubuntu:2, kubuntu:2, mx:1, puppy:1}, d:{cinnamon:2, kde:1, gnome:1, xfce:1, pantheon:1, budgie:1, mate:1}, maxDiff:2},
+      {t:"Alguna vez, copiando instrucciones de internet", s:"Copio, pego y cruzo los dedos.", w:{ubuntu:3, pop:2, mint:2, kubuntu:2, manjaro:2, bazzite:1, fedora:1, ubuntustudio:1, tails:1, nobara:1, rpi:1}, d:{gnome:1, kde:1, cinnamon:1, cosmic:1, budgie:1}, maxDiff:3},
+      {t:"Sí, me manejo bien con ella", s:"Sé moverme por carpetas y ejecutar programas.", w:{fedora:3, endeavour:3, cachyos:2, debian:2, opensuse:2, manjaro:2, almalinux:2, kali:1, pop:1, mx:1, garuda:1, silverblue:1, asahi:1}, d:{kde:1, xfce:1, cosmic:1, openbox:1, gnome:1, labwc:1}},
+      {t:"Soy programador o administrador de sistemas", s:"La consola es mi casa.", w:{arch:3, nixos:3, gentoo:3, void:3, kali:2, alpine:2, slackware:2, qubes:2, debian:1, opensuse:1}, d:{tiling:2, hyprland:2, niri:2, dwm:2, bspwm:2, awesome:2, qtile:2}}
     ]
   },
   {
-    q:"¿Qué ordenador vas a liberar?",
+    q:"¿En qué ordenador vas a instalar Linux?",
     rant:"Windows 11 exige TPM 2.0 y procesadores recientes. Millones de equipos que funcionan perfectamente se convierten en basura electrónica por decreto.",
     opts:[
-      {t:"Un portátil de hace 10 años", s:"Windows 11 me dijo que «no es compatible». Él tampoco me cae bien.", w:{mx:4, linuxlite:4, puppy:4, void:2, debian:2, mint:2}, d:{lxqt:3, xfce:3, icewm:3, openbox:2, mate:2, dwm:1, enlightenment:1}, exclude:["qubes","asahi","rpi"]},
-      {t:"Un PC normal, de los que cumplen", s:"Ni lento ni un cohete.", w:{mint:2, ubuntu:2, zorin:2, kubuntu:2, elementary:2, fedora:1, endeavour:1}, d:{cinnamon:2, budgie:2, kde:1, gnome:1, mate:1}},
-      {t:"Una bestia gamer con gráfica que suena a avión", s:"RGB incluido.", w:{bazzite:4, cachyos:4, nobara:4, pop:2, garuda:2, manjaro:1, arch:1, gentoo:1}, d:{kde:3, hyprland:2, gnome:1, cosmic:1}},
-      {t:"Un portátil nuevo y reluciente", s:"Aún huele a plástico.", w:{fedora:3, ubuntu:2, pop:2, qubes:2, kubuntu:1, elementary:1, opensuse:1, ubuntustudio:1, silverblue:1}, d:{gnome:2, kde:2, cosmic:2, niri:1, hyprland:1}},
-      {t:"Un servidor o un PC encendido 24/7 en un rincón", s:"Para tenerlo encendido 24/7.", w:{almalinux:4, debian:3, alpine:3, void:1, nixos:1, slackware:1}, d:{tiling:2, openbox:1, icewm:1, dwm:1}},
-      {t:"El de cualquiera: lo llevo en un USB", s:"Arranco donde me dejen.", w:{tails:4, kali:3, puppy:2, mx:1}, d:{xfce:2, gnome:1, openbox:1, icewm:1}},
-      {t:"Un Mac con chip Apple (M1 o M2)", s:"Me gusta el hardware, no tanto macOS.", w:{asahi:8}, d:{kde:2, gnome:2}, only:["asahi"]},
-      {t:"Una Raspberry Pi", s:"Pequeñita pero matona.", w:{rpi:6, alpine:2, debian:1, ubuntu:1}, d:{labwc:4, xfce:1, lxqt:1}, only:["rpi","ubuntu","debian","alpine","manjaro","fedora","opensuse"]}
+      {t:"Un ordenador viejo, de hace 10 años o más", s:"Windows 11 me dice que «no es compatible».", w:{mx:4, linuxlite:4, puppy:4, void:2, debian:2, mint:2}, d:{lxqt:3, xfce:3, icewm:3, openbox:2, mate:2, dwm:1, enlightenment:1}, exclude:["qubes","asahi","rpi"]},
+      {t:"Un ordenador normal, de los que cumplen", s:"Ni lento ni un cohete.", w:{mint:2, ubuntu:2, zorin:2, kubuntu:2, elementary:2, fedora:1, endeavour:1}, d:{cinnamon:2, budgie:2, kde:1, gnome:1, mate:1}},
+      {t:"Un PC gamer potente", s:"Con una buena tarjeta gráfica.", w:{bazzite:4, cachyos:4, nobara:4, pop:2, garuda:2, manjaro:1, arch:1, gentoo:1}, d:{kde:3, hyprland:2, gnome:1, cosmic:1}},
+      {t:"Un portátil nuevo o casi nuevo", s:"Aún huele a plástico.", w:{fedora:3, ubuntu:2, pop:2, qubes:2, kubuntu:1, elementary:1, opensuse:1, ubuntustudio:1, silverblue:1}, d:{gnome:2, kde:2, cosmic:2, niri:1, hyprland:1}},
+      {t:"Uno que estará siempre encendido en un rincón", s:"Para servir archivos, una web o la domótica de casa.", w:{almalinux:4, debian:3, alpine:3, void:1, nixos:1, slackware:1}, d:{tiling:2, openbox:1, icewm:1, dwm:1}},
+      {t:"Ninguno fijo: quiero llevarlo en un USB", s:"Y arrancarlo en cualquier ordenador.", w:{tails:4, kali:3, puppy:2, mx:1}, d:{xfce:2, gnome:1, openbox:1, icewm:1}},
+      {t:"Un Mac con chip Apple (M1 o M2)", s:"Me gusta el aparato, no tanto macOS.", w:{asahi:8}, d:{kde:2, gnome:2}, only:["asahi"]},
+      {t:"Una Raspberry Pi", s:"Un miniordenador del tamaño de una tarjeta de crédito.", w:{rpi:6, alpine:2, debian:1, ubuntu:1}, d:{labwc:4, xfce:1, lxqt:1}, only:["rpi","ubuntu","debian","alpine","manjaro","fedora","opensuse"]}
     ]
   },
   {
-    q:"¿Para qué lo vas a usar sobre todo?",
+    q:"¿Para qué vas a usar el ordenador?",
+    help:"Puedes marcar varias.",
+    multi:true,
     rant:"Windows trae preinstalados juegos, noticias, el tiempo, un asistente de IA y una tienda. Lo que no trae es la opción de no tenerlos.",
     opts:[
-      {t:"Navegar, ofimática y series", s:"Lo normal de la vida.", w:{mint:3, zorin:3, linuxlite:3, kubuntu:2, elementary:2, ubuntu:2, mx:1}, d:{cinnamon:1, gnome:1, budgie:1, pantheon:1}},
-      {t:"Jugar", s:"Steam abierto 24/7.", w:{bazzite:4, cachyos:4, nobara:4, pop:3, manjaro:2, garuda:2, endeavour:1}, d:{kde:2, gnome:1, hyprland:1}},
-      {t:"Programar y desarrollar", s:"Docker, Python, y mil pestañas.", w:{fedora:3, pop:2, arch:2, endeavour:2, nixos:2, opensuse:2, silverblue:2, void:1, ubuntu:1}, d:{tiling:1, hyprland:1, niri:1, gnome:1, kde:1, qtile:1, cosmic:1}},
-      {t:"Crear: música, vídeo, foto o diseño", s:"Mi DAW es sagrado.", w:{ubuntustudio:5, nobara:2, fedora:1, kubuntu:1, pop:1}, d:{kde:2, gnome:1}},
-      {t:"Cacharrear, servidores, homelab", s:"Tengo una Raspberry en cada cajón.", w:{debian:4, almalinux:4, alpine:3, nixos:2, rpi:2, void:1, arch:1, opensuse:1, slackware:1}, d:{tiling:1, openbox:1, icewm:1, dwm:1, labwc:1}},
-      {t:"Seguridad, auditorías o privacidad", s:"Hacking ético, siempre con permiso.", w:{kali:5, tails:4, qubes:4, debian:1, arch:1}, d:{xfce:2, gnome:1, tiling:1}}
+      {t:"Navegar, ofimática y ver series", s:"Lo normal de la vida.", w:{mint:3, zorin:3, linuxlite:3, kubuntu:2, elementary:2, ubuntu:2, mx:1}, d:{cinnamon:1, gnome:1, budgie:1, pantheon:1}},
+      {t:"Estudiar o trabajar desde casa", s:"Videollamadas, documentos, el correo del trabajo.", w:{ubuntu:2, mint:2, zorin:2, fedora:1, kubuntu:1, elementary:1}, d:{gnome:1, cinnamon:1, kde:1}},
+      {t:"Jugar", s:"Steam, Epic, emuladores…", w:{bazzite:4, cachyos:4, nobara:4, pop:3, manjaro:2, garuda:2, endeavour:1}, d:{kde:2, gnome:1, hyprland:1}},
+      {t:"Programar o desarrollar software", s:"Código, bases de datos, contenedores…", w:{fedora:3, pop:2, arch:2, endeavour:2, nixos:2, opensuse:2, silverblue:2, void:1, ubuntu:1}, d:{tiling:1, hyprland:1, niri:1, gnome:1, kde:1, qtile:1, cosmic:1}},
+      {t:"Crear: música, vídeo, foto o diseño", s:"Edición, dibujo, producción musical…", w:{ubuntustudio:5, nobara:2, fedora:1, kubuntu:1, pop:1}, d:{kde:2, gnome:1}},
+      {t:"Montar un servidor en casa o trastear", s:"Una nube propia, una web, domótica…", w:{debian:4, almalinux:4, alpine:3, nixos:2, rpi:2, void:1, arch:1, opensuse:1, slackware:1}, d:{tiling:1, openbox:1, icewm:1, dwm:1, labwc:1}},
+      {t:"Seguridad informática o máxima privacidad", s:"Hacking ético (con permiso) o navegar sin dejar rastro.", w:{kali:5, tails:4, qubes:4, debian:1, arch:1}, d:{xfce:2, gnome:1, tiling:1}}
     ]
   },
   {
-    q:"¿Cómo trabajas con las ventanas?",
+    q:"En Windows, ¿cómo sueles tener las ventanas?",
+    help:"Piensa en cómo trabajas ahora, no en cómo te gustaría.",
     rant:"En Windows 11, poner dos ventanas lado a lado consiste en pasar el ratón sobre el botón de maximizar, esperar al menú y apuntar bien. Productividad.",
     opts:[
-      {t:"Una a pantalla completa y cambio con Alt+Tab", s:"Una cosa cada vez.", w:{}, d:{gnome:3, pantheon:2, cosmic:1}},
-      {t:"Varias a la vez, que se coloquen solas en mosaico", s:"Que ninguna tape a otra.", w:{}, d:{tiling:3, hyprland:3, cosmic:3, bspwm:2, dwm:2, awesome:2, qtile:2, kde:1}},
-      {t:"En una cinta infinita que se desplaza de lado", s:"Abro ventanas sin que se encojan las demás.", w:{}, d:{niri:5}},
-      {t:"Las arrastro y las coloco donde me da la gana", s:"Mi caos, mis normas.", w:{}, d:{kde:2, cinnamon:2, xfce:2, mate:2, lxqt:2, openbox:2, labwc:2, icewm:1, budgie:1, enlightenment:1}},
-      {t:"¿Ventanas? Tengo 47 pestañas en una sola", s:"El navegador es mi sistema operativo.", w:{}, d:{gnome:1, budgie:1, cinnamon:1, xfce:1, pantheon:1}}
+      {t:"Una maximizada, y cambio con Alt+Tab o la barra de tareas", s:"Una cosa cada vez.", w:{}, d:{gnome:3, pantheon:2, cosmic:1}},
+      {t:"Dos o más lado a lado, arrastrándolas al borde", s:"Me encanta cuando se colocan solas.", w:{}, d:{tiling:3, hyprland:3, cosmic:3, bspwm:2, dwm:2, awesome:2, qtile:2, kde:1}},
+      {t:"Me gustaría tenerlas en fila, como un carrusel", s:"Y desplazarme entre ellas sin que ninguna se encoja.", w:{}, d:{niri:5}},
+      {t:"Sueltas, y las muevo con el ratón donde me apetece", s:"Mi caos, mis normas.", w:{}, d:{kde:2, cinnamon:2, xfce:2, mate:2, lxqt:2, openbox:2, labwc:2, icewm:1, budgie:1, enlightenment:1}},
+      {t:"Casi todo lo hago en el navegador, con muchas pestañas", s:"El navegador es mi sistema operativo.", w:{}, d:{gnome:1, budgie:1, cinnamon:1, xfce:1, pantheon:1}}
     ]
   },
   {
-    q:"¿Teclado o ratón?",
+    q:"¿Usas atajos de teclado?",
     rant:"El atajo de Windows para colocar ventanas en una cuadrícula personalizada es instalar un programa aparte. De Microsoft, eso sí.",
     opts:[
-      {t:"Ratón para todo", s:"El teclado es para escribir.", w:{}, d:{cinnamon:3, mate:2, xfce:2, budgie:2, lxqt:2, pantheon:1, icewm:1, labwc:1}},
-      {t:"Mitad y mitad", s:"Ctrl+C, Ctrl+V y poco más.", w:{}, d:{kde:2, gnome:2, cosmic:2, budgie:1, openbox:1, enlightenment:1}},
-      {t:"Teclado. El ratón es para emergencias", s:"Super+Enter y a volar.", w:{arch:1}, d:{tiling:4, hyprland:3, niri:3, dwm:3, bspwm:3, awesome:3, qtile:3, cosmic:1, gnome:1}}
+      {t:"Casi ninguno: uso el ratón para todo", s:"El teclado es para escribir.", w:{}, d:{cinnamon:3, mate:2, xfce:2, budgie:2, lxqt:2, pantheon:1, icewm:1, labwc:1}},
+      {t:"Los típicos: Ctrl+C, Ctrl+V, Alt+Tab…", s:"Lo justo para ir rápido.", w:{}, d:{kde:2, gnome:2, cosmic:2, budgie:1, openbox:1, enlightenment:1}},
+      {t:"Muchísimos: si puedo, no toco el ratón", s:"Me sé atajos que nadie conoce.", w:{arch:1}, d:{tiling:4, hyprland:3, niri:3, dwm:3, bspwm:3, awesome:3, qtile:3, cosmic:1, gnome:1}}
     ]
   },
   {
-    q:"¿Qué aspecto quieres que tenga tu escritorio?",
+    q:"¿Qué aspecto te gustaría que tuviera tu escritorio?",
     rant:"En Windows 11 ya no puedes mover la barra de tareas a un lateral. Una función de 1995 eliminada en 2021. Progreso.",
     opts:[
-      {t:"Que se parezca a Windows, pero sin lo malo", s:"Barra abajo, menú a la izquierda.", w:{zorin:4, mint:3, kubuntu:2, linuxlite:2, mx:1, puppy:1}, d:{cinnamon:3, kde:2, xfce:2, lxqt:2, icewm:2, mate:1}},
-      {t:"Elegante y minimalista, tipo Mac", s:"Sin pagar 2.000 € por él.", w:{elementary:4, zorin:2, fedora:1, pop:1, asahi:1}, d:{pantheon:3, budgie:2, gnome:1, cosmic:1, enlightenment:1}},
-      {t:"Moderno y limpio, con su propio estilo", s:"Sorpréndeme, pero con gusto.", w:{silverblue:3, fedora:2, ubuntu:2, pop:2, bazzite:1, ubuntustudio:1, tails:1, nobara:1}, d:{gnome:3, cosmic:3, niri:1}},
-      {t:"Lo voy a personalizar hasta el último píxel", s:"Mi escritorio, mis reglas.", w:{arch:3, kubuntu:2, endeavour:2, manjaro:2, opensuse:2, cachyos:1, gentoo:1, void:1, nixos:1, garuda:1}, d:{kde:3, hyprland:2, awesome:2, qtile:1, bspwm:1, openbox:1}},
-      {t:"Llamativo: neón, transparencias y efectos", s:"Que parezca la nave de una peli de ciencia ficción.", w:{garuda:4, cachyos:1, kubuntu:1}, d:{hyprland:3, enlightenment:3, kde:2}},
-      {t:"¿Escritorio? Con una terminal me sobra", s:"El fondo de pantalla es negro y tiene un cursor.", w:{almalinux:3, alpine:3, gentoo:2, void:2, debian:2, kali:1, arch:1, slackware:1}, d:{dwm:3, tiling:3, bspwm:2, niri:1, awesome:1}},
-      {t:"Retro: dos paneles, como Linux en 2008", s:"Cuando los escritorios eran escritorios.", w:{debian:1, mint:1, slackware:1}, d:{mate:4, xfce:1, openbox:1, icewm:1}}
+      {t:"Como Windows: barra abajo y menú de inicio", s:"Lo de siempre, pero sin lo malo.", w:{zorin:4, mint:3, kubuntu:2, linuxlite:2, mx:1, puppy:1}, d:{cinnamon:3, kde:2, xfce:2, lxqt:2, icewm:2, mate:1}},
+      {t:"Como un Mac: limpio, con una fila de iconos abajo", s:"Sin pagar el precio de la manzana.", w:{elementary:4, zorin:2, fedora:1, pop:1, asahi:1}, d:{pantheon:3, budgie:2, gnome:1, cosmic:1, enlightenment:1}},
+      {t:"Moderno y minimalista, con su propio estilo", s:"Sorpréndeme, pero con buen gusto.", w:{silverblue:3, fedora:2, ubuntu:2, pop:2, bazzite:1, ubuntustudio:1, tails:1, nobara:1}, d:{gnome:3, cosmic:3, niri:1}},
+      {t:"Que pueda cambiarlo todo a mi gusto", s:"Colores, paneles, iconos, todo.", w:{arch:3, kubuntu:2, endeavour:2, manjaro:2, opensuse:2, cachyos:1, gentoo:1, void:1, nixos:1, garuda:1}, d:{kde:3, hyprland:2, awesome:2, qtile:1, bspwm:1, openbox:1}},
+      {t:"Llamativo: transparencias, efectos y colores", s:"Que parezca una nave espacial.", w:{garuda:4, cachyos:1, kubuntu:1}, d:{hyprland:3, enlightenment:3, kde:2}},
+      {t:"Me sobra todo: solo ventanas y una barra con la hora", s:"Para gente muy de teclado.", w:{almalinux:3, alpine:3, gentoo:2, void:2, debian:2, kali:1, arch:1, slackware:1}, d:{dwm:3, tiling:3, bspwm:2, niri:1, awesome:1}},
+      {t:"Sencillo y clásico, como los ordenadores de antes", s:"Cuando las cosas eran como eran.", w:{debian:1, mint:1, slackware:1}, d:{mate:4, xfce:1, openbox:1, icewm:1}}
     ]
   },
   {
-    q:"¿Cuánto quieres personalizar el escritorio?",
+    q:"¿Cuánto te gusta personalizar el ordenador?",
+    help:"Las cuatro últimas opciones son para programadores. Si no lo eres, elige entre las tres primeras.",
     rant:"Para recuperar el menú contextual clásico en Windows 11 hay que editar el registro. El registro, en pleno siglo XXI.",
     opts:[
-      {t:"Nada. Que venga bonito y no me haga pensar", s:"Confío en los diseñadores.", w:{}, d:{pantheon:3, gnome:3, cosmic:1, cinnamon:1}},
-      {t:"Lo justo: fondo, tema y poco más", s:"Un toque personal.", w:{}, d:{cinnamon:2, budgie:2, cosmic:2, xfce:1, mate:1, lxqt:1}},
-      {t:"Todo, pero con ventanas de ajustes", s:"Cada panel, cada widget, cada sombra.", w:{}, d:{kde:4, enlightenment:2, xfce:1}},
-      {t:"Con archivos de configuración y dotfiles en git", s:"Si no se puede versionar, no existe.", w:{nixos:1}, d:{hyprland:3, tiling:3, niri:2, openbox:1}},
-      {t:"Con scripts de shell, que todo es un script", s:"bspc, sxhkd y a correr.", w:{}, d:{bspwm:5}},
-      {t:"Programando en Python", s:"Es lo que sé, y funciona.", w:{}, d:{qtile:5}},
-      {t:"Programando en Lua, con widgets propios", s:"Mi barra, mis reglas.", w:{}, d:{awesome:5}},
-      {t:"Editando el código en C y recompilando", s:"La configuración es para débiles.", w:{gentoo:1}, d:{dwm:5}}
+      {t:"Nada: que venga bonito y no me haga pensar", s:"Confío en quien lo diseñó.", w:{}, d:{pantheon:3, gnome:3, cosmic:1, cinnamon:1}},
+      {t:"Lo justo: fondo de pantalla, colores y poco más", s:"Un toque personal.", w:{}, d:{cinnamon:2, budgie:2, cosmic:2, xfce:1, mate:1, lxqt:1}},
+      {t:"Mucho, pero desde menús y ventanas de ajustes", s:"Cada panel, cada icono, cada sombra.", w:{}, d:{kde:4, enlightenment:2, xfce:1}},
+      {t:"Escribiendo archivos de configuración", s:"Y guardándolos para llevarlos a otro PC.", w:{nixos:1}, d:{hyprland:3, tiling:3, niri:2, openbox:1}},
+      {t:"Programando: con scripts de shell", s:"bspc, sxhkd y a correr.", w:{}, d:{bspwm:5}},
+      {t:"Programando: en Python", s:"Es lo que sé, y funciona.", w:{}, d:{qtile:5}},
+      {t:"Programando: en Lua", s:"Con mis propios widgets.", w:{}, d:{awesome:5}},
+      {t:"Programando: en C, y recompilando", s:"La configuración es para débiles.", w:{gentoo:1}, d:{dwm:5}}
     ]
   },
   {
-    q:"¿Cómo te gustan las actualizaciones?",
+    q:"¿Cómo prefieres las actualizaciones?",
     rant:"«Tu dispositivo se reiniciará en 15 minutos.» Lo dice mientras tienes abierta la presentación que no has guardado. Siempre ese día.",
     opts:[
-      {t:"Lo último de lo último, aunque algo explote", s:"Vivo en la versión beta de la vida.", w:{arch:3, endeavour:3, opensuse:3, cachyos:2, void:2, garuda:2, gentoo:1, manjaro:1, fedora:1, kali:1}, d:{}},
-      {t:"Recientes, pero bien probadas", s:"Lo nuevo, cuando funcione.", w:{fedora:3, manjaro:2, bazzite:2, nobara:2, silverblue:2, pop:1, ubuntu:1, kubuntu:1, ubuntustudio:1, asahi:1}, d:{}},
-      {t:"Estable como una roca. Que nada cambie en años", s:"Si funciona, no lo toques.", w:{debian:3, almalinux:3, mint:2, mx:2, slackware:2, linuxlite:1, ubuntu:1}, d:{}},
+      {t:"Siempre lo último, aunque alguna vez falle algo", s:"Me gusta estrenar.", w:{arch:3, endeavour:3, opensuse:3, cachyos:2, void:2, garuda:2, gentoo:1, manjaro:1, fedora:1, kali:1}, d:{}},
+      {t:"Novedades, pero bien probadas", s:"Lo nuevo, cuando funcione.", w:{fedora:3, manjaro:2, bazzite:2, nobara:2, silverblue:2, pop:1, ubuntu:1, kubuntu:1, ubuntustudio:1, asahi:1}, d:{}},
+      {t:"Que no cambie nada en años", s:"Si funciona, no lo toques.", w:{debian:3, almalinux:3, mint:2, mx:2, slackware:2, linuxlite:1, ubuntu:1}, d:{}},
       {t:"Me da igual, mientras no me interrumpan", s:"Que pasen en silencio y sin sustos.", w:{mint:2, zorin:2, elementary:2, bazzite:2, linuxlite:1, kubuntu:1, ubuntu:1, tails:1, silverblue:1}, d:{}}
     ]
   },
   {
-    q:"¿Qué es lo que más te saca de quicio de Windows?",
+    q:"¿Qué te saca de quicio de Windows?",
+    help:"Puedes marcar varias. Sabemos que la lista es larga.",
+    multi:true,
     rant:"Pregunta difícil: la lista es tan larga que tenemos un muro entero dedicado a ella. Más abajo, cuando termines.",
     opts:[
       {t:"Que se reinicie cuando le da la gana", s:"Adiós, 47 pestañas.", w:{mint:2, debian:2, bazzite:2, silverblue:2, almalinux:1, nixos:1}, d:{}},
-      {t:"La telemetría: siento que me observan", s:"Porque te observan.", w:{tails:3, debian:3, qubes:2, kali:1, arch:1, fedora:1, mx:1, void:1, nixos:1}, d:{}},
+      {t:"Que recoja datos de lo que hago", s:"La famosa telemetría.", w:{tails:3, debian:3, qubes:2, kali:1, arch:1, fedora:1, mx:1, void:1, nixos:1}, d:{}},
       {t:"Que vaya lento aunque no esté haciendo nada", s:"«Antimalware Service Executable», 40 % de CPU.", w:{mx:3, puppy:3, linuxlite:2, cachyos:2, void:2, arch:1, debian:1, manjaro:1, gentoo:1, alpine:1}, d:{lxqt:2, xfce:1, icewm:1, dwm:1}},
       {t:"Los anuncios en el menú Inicio. En el menú Inicio.", s:"Pagué una licencia para ver publicidad.", w:{zorin:3, elementary:2, mint:2, kubuntu:1, ubuntu:1, fedora:1}, d:{cinnamon:1, gnome:1, pantheon:1}},
-      {t:"Que el software creativo sea de suscripción", s:"Pagar cada mes por editar fotos de mis vacaciones.", w:{ubuntustudio:3, kubuntu:1, fedora:1}, d:{kde:1}},
+      {t:"Pagar suscripciones por programas", s:"Office, Adobe y compañía.", w:{ubuntustudio:3, kubuntu:1, fedora:1}, d:{kde:1}},
       {t:"Que no puedo mover la barra de tareas", s:"Era una función de 1995.", w:{kubuntu:1}, d:{kde:2, xfce:2, mate:1, lxqt:1, budgie:1, icewm:1}},
       {t:"Lo incómodo que es poner ventanas lado a lado", s:"Arrastrar y rezar.", w:{pop:2}, d:{cosmic:3, tiling:2, hyprland:2, niri:2, kde:1}}
     ]
   },
   {
-    q:"¿Qué filosofía va contigo?",
+    q:"¿Con qué frase te identificas más?",
     rant:"La filosofía de Windows: tu ordenador es tuyo, pero la cuenta de Microsoft, el navegador por defecto y las actualizaciones las elegimos nosotros.",
     opts:[
-      {t:"Que funcione y punto", s:"No vine aquí a hacer política.", w:{ubuntu:2, mint:2, zorin:2, kubuntu:2, pop:2, linuxlite:1, ubuntustudio:1, bazzite:1, nobara:1, rpi:1}, d:{gnome:1, cinnamon:1}},
-      {t:"Software libre, los principios por delante", s:"Mis cuatro libertades no se tocan.", w:{debian:4, fedora:2, void:1}, d:{gnome:1, xfce:1}},
-      {t:"Hazlo tú mismo y entiende cada pieza", s:"Aprender es parte de la diversión.", w:{arch:4, gentoo:3, void:2, endeavour:2, slackware:2, alpine:2, nixos:1, manjaro:1, opensuse:1}, d:{dwm:1, bspwm:1, openbox:1}},
-      {t:"Mi sistema es código: declarativo y reproducible", s:"Si no está en git, no existe.", w:{nixos:4, silverblue:2, bazzite:1, fedora:1}, d:{hyprland:1, niri:1}},
-      {t:"Rendimiento máximo, hasta el último ciclo", s:"Compilado para mi CPU y para nadie más.", w:{gentoo:4, cachyos:4, void:1, arch:1}, d:{dwm:2, icewm:1, lxqt:1}},
-      {t:"Privacidad y seguridad ante todo", s:"Confío en el código que puedo auditar.", w:{tails:4, qubes:4, kali:3, debian:1, almalinux:1}, d:{xfce:1}},
-      {t:"Lo clásico: si funcionaba en 1993, funciona hoy", s:"Sin modas, sin prisas.", w:{slackware:5, debian:1, void:1}, d:{mate:1, icewm:1, openbox:1}}
+      {t:"Quiero que funcione y punto", s:"No vine aquí a hacer política.", w:{ubuntu:2, mint:2, zorin:2, kubuntu:2, pop:2, linuxlite:1, ubuntustudio:1, bazzite:1, nobara:1, rpi:1}, d:{gnome:1, cinnamon:1}},
+      {t:"Prefiero software libre, por principios", s:"Que cualquiera pueda ver y mejorar el código.", w:{debian:4, fedora:2, void:1}, d:{gnome:1, xfce:1}},
+      {t:"Me gusta entender cómo funciona todo por dentro", s:"Aprender es parte de la diversión.", w:{arch:4, gentoo:3, void:2, endeavour:2, slackware:2, alpine:2, nixos:1, manjaro:1, opensuse:1}, d:{dwm:1, bspwm:1, openbox:1}},
+      {t:"Quiero copiar mi sistema entero a otro PC tal cual", s:"Y volver atrás si algo sale mal.", w:{nixos:4, silverblue:2, bazzite:1, fedora:1}, d:{hyprland:1, niri:1}},
+      {t:"Que vaya lo más rápido posible", s:"Que aproveche hasta el último ciclo del procesador.", w:{gentoo:4, cachyos:4, void:1, arch:1}, d:{dwm:2, icewm:1, lxqt:1}},
+      {t:"Mi privacidad y mi seguridad, lo primero", s:"No me fío ni de mi sombra.", w:{tails:4, qubes:4, kali:3, debian:1, almalinux:1}, d:{xfce:1}},
+      {t:"Lo clásico: si funcionaba hace 30 años, funciona hoy", s:"Sin modas, sin prisas.", w:{slackware:5, debian:1, void:1}, d:{mate:1, icewm:1, openbox:1}}
     ]
   },
   {
@@ -969,10 +981,10 @@ const QUESTIONS = [
     opts:[
       {t:"Llamo a mi sobrino", s:"Es el informático de la familia.", w:{zorin:3, mint:3, linuxlite:2, elementary:2, kubuntu:1, ubuntu:1}, d:{}},
       {t:"Busco el error en internet", s:"Alguien en 2014 tuvo el mismo problema.", w:{ubuntu:3, pop:2, kubuntu:2, endeavour:2, manjaro:2, fedora:1, cachyos:1, ubuntustudio:1, kali:1, nobara:1, rpi:1}, d:{}},
-      {t:"Me leo la wiki entera y disfruto el proceso", s:"Arreglarlo es la mitad de la gracia.", w:{arch:3, gentoo:3, void:2, debian:2, endeavour:1, opensuse:1, slackware:1, alpine:1}, d:{}},
-      {t:"Vuelvo a la versión anterior y aquí no ha pasado nada", s:"Ctrl+Z para el sistema entero.", w:{silverblue:4, nixos:3, opensuse:3, bazzite:2, garuda:2, cachyos:1, fedora:1}, d:{}},
-      {t:"Apago, y al encender está como nuevo", s:"Nada persiste, nada se rompe.", w:{tails:4, puppy:3, kali:1, qubes:1}, d:{}},
-      {t:"Abro un ticket y consulto la documentación oficial", s:"Como en la oficina, pero sin la oficina.", w:{almalinux:4, debian:1, opensuse:1}, d:{}}
+      {t:"Leo la documentación con calma hasta entenderlo", s:"Arreglarlo es la mitad de la gracia.", w:{arch:3, gentoo:3, void:2, debian:2, endeavour:1, opensuse:1, slackware:1, alpine:1}, d:{}},
+      {t:"Quiero un botón para volver a como estaba ayer", s:"Como «Restaurar sistema», pero que funcione.", w:{silverblue:4, nixos:3, opensuse:3, bazzite:2, garuda:2, cachyos:1, fedora:1}, d:{}},
+      {t:"Apago, y al encender todo está como nuevo", s:"Sistemas que se borran al apagar.", w:{tails:4, puppy:3, kali:1, qubes:1}, d:{}},
+      {t:"Aviso al soporte técnico, como en la oficina", s:"Que lo arregle quien sabe.", w:{almalinux:4, debian:1, opensuse:1}, d:{}}
     ]
   }
 ];
@@ -1207,18 +1219,33 @@ const MAX = {};
 Object.keys(DISTROS).forEach(k => {
   MAX[k] = QUESTIONS.reduce((sum, q) => sum + Math.max(0, ...q.opts.map(o => o.w[k] || 0)), 0);
 });
+/* Respuestas elegidas. En las preguntas de respuesta múltiple, cada opción pesa 1/√n para no inflar la puntuación. */
+function picks(){
+  const out = [];
+  answers.forEach((a, i) => {
+    if (a == null) return;
+    const opts = QUESTIONS[i].opts;
+    if (Array.isArray(a)){ const f = 1 / Math.sqrt(a.length || 1); a.forEach(j => out.push({o:opts[j], f})); }
+    else out.push({o:opts[a], f:1});
+  });
+  return out;
+}
+/* Quien nunca ha usado la consola no recibe opciones de dificultad alta, salvo que el hardware no deje otra. */
+function maxDiff(){ return Math.min(9, ...picks().map(p => p.o.maxDiff || 9)); }
+function capDiff(keys, items){ const md = maxDiff(); const f = keys.filter(k => items[k].diff <= md); return f.length ? f : keys; }
+
 function ranking(){
   const score = {}, ITEMS_ = ITEMS(), QS_ = QS(), MAX_ = MAX;
   Object.keys(ITEMS_).forEach(k => score[k] = 0);
-  answers.forEach((a, i) => { if (a == null) return; const w = QS_[i].opts[a].w; for (const k in w) score[k] += w[k]; });
+  const P = picks();
+  P.forEach(({o, f}) => { for (const k in o.w) score[k] += o.w[k] * f; });
   // Respuestas de hardware: descartan las distros que no funcionarían en ese equipo.
   let allowed = Object.keys(ITEMS_);
-  answers.forEach((a, i) => {
-    if (a == null) return;
-    const o = QS_[i].opts[a];
+  P.forEach(({o}) => {
     if (o.only) allowed = allowed.filter(k => o.only.includes(k));
     if (o.exclude) allowed = allowed.filter(k => !o.exclude.includes(k));
   });
+  allowed = capDiff(allowed, ITEMS_);
   const list = allowed.map(k => {
     const ratio = MAX_[k] ? score[k] / MAX_[k] : 0;
     return {k, score:score[k], ratio};
@@ -1238,8 +1265,8 @@ function ranking(){
 function deRanking(dk){
   const score = {};
   Object.keys(DES).forEach(k => score[k] = DES[k].distros.includes(dk) ? DE_BONUS : 0);
-  answers.forEach((a, i) => { if (a == null) return; const d = QUESTIONS[i].opts[a].d || {}; for (const k in d) score[k] += d[k]; });
-  const list = Object.keys(DES).map(k => ({k, score:score[k], ratio: MAX_DE[k] ? score[k] / MAX_DE[k] : 0}));
+  picks().forEach(({o, f}) => { const d = o.d || {}; for (const k in d) score[k] += d[k] * f; });
+  const list = capDiff(Object.keys(DES), DES).map(k => ({k, score:score[k], ratio: MAX_DE[k] ? score[k] / MAX_DE[k] : 0}));
   list.sort((a, b) => b.score - a.score || b.ratio - a.ratio);
   const top = list[0].score || 1;
   list.forEach(d => { d.pct = Math.max(12, Math.min(99, Math.round(48 + 30 * d.ratio + 21 * d.score / top))); });
@@ -1291,13 +1318,15 @@ function renderQuestion(focusFirst){
       <div class="q-main">
         <span class="q-num">Pregunta ${cur + 1} de ${QS_.length}</span>
         <h2 id="qTitle">${esc(Q.q)}</h2>
-        <div class="opts" role="group" aria-labelledby="qTitle">
-          ${Q.opts.map((o, i) => `
-            <button class="opt${answers[cur] === i ? " picked" : ""}" type="button" data-i="${i}" id="opt-${cur}-${i}" aria-pressed="${answers[cur] === i}">
-              <span class="k">${LETTERS[i]}</span>
+        ${Q.help ? `<p class="q-help">${esc(Q.help)}</p>` : ""}
+        <div class="opts${Q.multi ? " multi" : ""}" role="group" aria-labelledby="qTitle">
+          ${Q.opts.map((o, i) => { const on = isPicked(cur, i); return `
+            <button class="opt${on ? " picked" : ""}" type="button" data-i="${i}" id="opt-${cur}-${i}" aria-pressed="${on}">
+              <span class="k">${Q.multi ? (on ? "✓" : "") : LETTERS[i]}</span>
               <span>${esc(o.t)}<small>${esc(o.s)}</small></span>
-            </button>`).join("")}
+            </button>`; }).join("")}
         </div>
+        ${Q.multi ? `<div class="multi-next"><button class="btn btn-primary" type="button" id="nextQ" ${(answers[cur] || []).length ? "" : "disabled"}>Siguiente <span aria-hidden="true">→</span></button><span class="cta-meta" id="multiCount">${multiLabel()}</span></div>` : ""}
         <div class="q-nav">
           <button class="linkbtn" type="button" id="back" ${cur === 0 ? "disabled" : ""}>← Pregunta anterior</button>
           <button class="linkbtn" type="button" id="restart">Empezar de nuevo</button>
@@ -1311,20 +1340,37 @@ function renderQuestion(focusFirst){
       </aside>
     </div>`;
   stage.querySelectorAll(".opt").forEach(b => b.addEventListener("click", () => pick(+b.dataset.i)));
+  const nx = document.getElementById("nextQ");
+  if (nx) nx.addEventListener("click", advance);
   document.getElementById("back").addEventListener("click", () => { if (cur > 0){ cur--; renderQuestion(true); } });
   document.getElementById("restart").addEventListener("click", reset);
   if (focusFirst){ const f = stage.querySelector(".opt.picked") || stage.querySelector(".opt"); f && f.focus({preventScroll:true}); }
 }
 
+function isPicked(q, i){ const a = answers[q]; return Array.isArray(a) ? a.includes(i) : a === i; }
+function multiLabel(){ const n = (answers[cur] || []).length; return n ? `${n} marcada${n > 1 ? "s" : ""}` : "Marca al menos una"; }
 function pick(i){
   if (view !== "q") return;
+  const Q = QUESTIONS[cur];
+  if (Q.multi){
+    const a = Array.isArray(answers[cur]) ? answers[cur].slice() : [];
+    const at = a.indexOf(i);
+    if (at >= 0) a.splice(at, 1); else a.push(i);
+    answers[cur] = a.length ? a.sort((x, y) => x - y) : null;
+    stage.querySelectorAll(".opt").forEach(b => { const on = isPicked(cur, +b.dataset.i); b.classList.toggle("picked", on); b.setAttribute("aria-pressed", on); b.querySelector(".k").textContent = on ? "✓" : ""; });
+    document.getElementById("nextQ").disabled = !answers[cur];
+    document.getElementById("multiCount").textContent = multiLabel();
+    return;
+  }
   answers[cur] = i;
   stage.querySelectorAll(".opt").forEach(b => { const on = +b.dataset.i === i; b.classList.toggle("picked", on); b.setAttribute("aria-pressed", on); });
   view = "picking";
-  later(() => {
-    if (cur < QS().length - 1){ cur++; renderQuestion(true); }
-    else renderLoading();
-  }, reduce ? 120 : 380);
+  later(advance, reduce ? 120 : 380);
+}
+function advance(){
+  if (answers[cur] == null) return;
+  if (cur < QS().length - 1){ cur++; renderQuestion(true); }
+  else renderLoading();
 }
 
 function renderLoading(){
@@ -1747,9 +1793,10 @@ document.getElementById("startWall").addEventListener("click", e => { e.preventD
 document.addEventListener("keydown", e => {
   if (view !== "q" || e.altKey || e.ctrlKey || e.metaKey) return;
   const tag = (e.target.tagName || "").toLowerCase(); if (tag === "input" || tag === "textarea") return;
+  if (e.key === "Enter" && QUESTIONS[cur].multi && tag !== "button"){ e.preventDefault(); advance(); return; }
   const k = e.key.toUpperCase();
   const idx = LETTERS.indexOf(k) >= 0 ? LETTERS.indexOf(k) : ["1","2","3","4","5","6","7","8"].indexOf(k);
-  if (idx >= 0){ e.preventDefault(); pick(idx); }
+  if (idx >= 0 && idx < QUESTIONS[cur].opts.length){ e.preventDefault(); pick(idx); }
 });
 
 /* ================= Muro ================= */
