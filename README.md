@@ -1,8 +1,11 @@
 # Distrómetro
 
-Test humorístico de 11 preguntas que te recomienda a la vez tu distribución de Linux y tu escritorio ideales entre 32 candidatas (Linux Mint, Ubuntu, Kubuntu, Zorin OS, elementary OS, Linux Lite, MX Linux, Puppy Linux, Fedora, Fedora Silverblue, Pop!_OS, Ubuntu Studio, Bazzite, Nobara, CachyOS, Garuda Linux, Manjaro, EndeavourOS, Arch, openSUSE Tumbleweed, Debian, AlmaLinux, Alpine, Void Linux, Gentoo, Slackware, NixOS, Kali Linux, Tails, Qubes OS, Fedora Asahi Remix y Raspberry Pi OS). Muestra cómo es la distro, por qué encaja contigo, su ficha técnica y un enlace a la descarga oficial de la ISO. De paso, se queja de todo lo que hace mal Windows.
+Test humorístico de 13 preguntas que te recomienda a la vez tu distribución de Linux y tu escritorio ideales entre 32 candidatas (Linux Mint, Ubuntu, Kubuntu, Zorin OS, elementary OS, Linux Lite, MX Linux, Puppy Linux, Fedora, Fedora Silverblue, Pop!_OS, Ubuntu Studio, Bazzite, Nobara, CachyOS, Garuda Linux, Manjaro, EndeavourOS, Arch, openSUSE Tumbleweed, Debian, AlmaLinux, Alpine, Void Linux, Gentoo, Slackware, NixOS, Kali Linux, Tails, Qubes OS, Fedora Asahi Remix y Raspberry Pi OS). Muestra cómo es la distro, por qué encaja contigo, su ficha técnica y un enlace a la descarga oficial de la ISO. De paso, se queja de todo lo que hace mal Windows.
 
 Incluye además:
+
+- Preguntas pensadas para quien viene de Windows, algunas con varias respuestas posibles.
+- Preguntas sobre cuánto quieres cambiar y cuánto tiempo dedicarle: el test puede proponerte algo nuevo o un reto, y en el resultado sugiere una alternativa distinta (o un plan B más tranquilo).
 
 - 20 escritorios y gestores de ventanas: GNOME, KDE Plasma, Cinnamon, Xfce, MATE, LXQt, Budgie, COSMIC, Pantheon, Enlightenment, Hyprland, niri, i3 y Sway, awesome, bspwm, dwm, Qtile, Openbox, IceWM y labwc.
 - Un catálogo de escritorios con ficha, captura (salvo niri y Qtile, que no tienen capturas libres en Commons) y enlace propio para cada uno (por ejemplo [`#kde`](https://user161803.github.io/distrometro/#kde)).

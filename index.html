@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Test humorístico de 11 preguntas que te recomienda tu distro y tu escritorio de Linux ideales y se queja sin piedad de Windows.">
+<meta name="description" content="Test humorístico de 13 preguntas que te recomienda tu distro y tu escritorio de Linux ideales y se queja sin piedad de Windows.">
 <meta name="theme-color" content="#141826">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23141826'/%3E%3Ctext x='32' y='42' font-family='monospace' font-size='28' font-weight='700' text-anchor='middle' fill='%23F2A900'%3E$_%3C/text%3E%3C/svg%3E">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="es_ES">
 <meta property="og:title" content="Distrómetro: encuentra tu distro de Linux perfecta">
-<meta property="og:description" content="Un solo test de 11 preguntas para descubrir tu combo de Linux: distro y escritorio, entre 32 distros y 20 escritorios. Mientras, nos quejamos de Windows.">
+<meta property="og:description" content="Un solo test de 13 preguntas para descubrir tu combo de Linux: distro y escritorio, entre 32 distros y 20 escritorios. Mientras, nos quejamos de Windows.">
 <meta property="og:url" content="https://user161803.github.io/distrometro/">
 <meta name="twitter:card" content="summary">
 <title>Distrómetro</title>
@@ -311,6 +311,10 @@ p{margin:0}
 .dthumb.ph{display:grid; place-items:center; font-family:var(--f-mono); font-size:.74rem; color:var(--muted); border-style:dashed}
 .alts-grid{display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:20px}
 .alt-list.one{grid-template-columns:minmax(0, 1fr)}
+.stretch{display:flex; flex-direction:column; gap:12px; padding:clamp(18px, 3vw, 24px); border-radius:var(--r); border:1.5px dashed color-mix(in srgb, var(--tux) 60%, var(--line)); background:var(--tux-soft)}
+.stretch p{font-size:.95rem; max-width:60em}
+.combo-plus.sm{font-size:1.4rem}
+.combo-note.challenge{color:var(--ink); font-weight:500}
 .toast{font-family:var(--f-mono); font-size:.82rem; color:var(--muted)}
 
 .fade{animation:fadeup .35s ease both}
@@ -423,10 +427,10 @@ footer code{font-family:var(--f-mono); font-size:.82rem}
     <div class="hero-copy">
       <span class="eyebrow">Test vocacional para desertores de Windows</span>
       <h1>Encuentra tu <span class="hl">distro de Linux</span> perfecta antes de que Windows se reinicie solo.</h1>
-      <p class="lede">Once preguntas, cero cuentas de Microsoft obligatorias. Te decimos qué distro de Linux y qué escritorio encajan contigo, cómo son por dentro y dónde bajar la ISO. <strong>Sin anuncios en el menú Inicio</strong>, porque aquí no hay menú Inicio que estropear.</p>
+      <p class="lede">Trece preguntas, cero cuentas de Microsoft obligatorias. Te decimos qué distro de Linux y qué escritorio encajan contigo, cómo son por dentro y dónde bajar la ISO. <strong>Sin anuncios en el menú Inicio</strong>, porque aquí no hay menú Inicio que estropear.</p>
       <div class="cta-row">
         <button class="btn btn-primary" id="startHero" type="button">Hacer el test <span aria-hidden="true">→</span></button>
-        <span class="cta-meta">11 preguntas · distro + escritorio · 0 pantallazos azules</span>
+        <span class="cta-meta">13 preguntas · distro + escritorio · 0 pantallazos azules</span>
       </div>
     </div>
 
@@ -889,6 +893,28 @@ const QUESTIONS = [
     ]
   },
   {
+    q:"¿Qué buscas con el cambio?",
+    help:"No hay respuesta mala. Mucha gente descubre que le encanta algo que no se esperaba.",
+    rant:"Windows 11 cambió a la vez el menú Inicio, la barra de tareas y el menú del clic derecho. Nadie había pedido ninguno de esos cambios.",
+    opts:[
+      {t:"Algo parecido a Windows, para no notar el salto", s:"Cambiar lo justo.", w:{mint:3, zorin:3, kubuntu:2, linuxlite:2, mx:1}, d:{cinnamon:3, kde:2, xfce:1, icewm:1}},
+      {t:"Algo mejor, pero que me resulte cómodo", s:"Un paso adelante, sin sustos.", w:{ubuntu:2, fedora:2, pop:2, elementary:1, kubuntu:1, bazzite:1}, d:{gnome:2, kde:2, cosmic:2, budgie:1}},
+      {t:"Algo totalmente distinto, aunque aún no sepa qué", s:"Sorpréndeme con otra forma de usar el ordenador.", w:{elementary:2, silverblue:2, fedora:2, pop:2, nixos:1, garuda:1, kubuntu:-1, mint:-2, zorin:-2, linuxlite:-2}, d:{gnome:3, niri:3, cosmic:3, pantheon:2, hyprland:2, mate:-1, cinnamon:-2, icewm:-2}, unlock:3},
+      {t:"Un reto: aprender Linux a fondo, aunque me cueste", s:"Quiero entender lo que hay debajo.", w:{arch:3, endeavour:2, gentoo:2, void:2, nixos:2, debian:1, slackware:1, mint:-2, zorin:-2}, d:{hyprland:2, tiling:2, niri:1, bspwm:1, dwm:1, awesome:1, qtile:1, cinnamon:-1}, unlock:5}
+    ]
+  },
+  {
+    q:"¿Cuánto tiempo le dedicarías al principio?",
+    help:"Instalar Linux es rápido. La pregunta es cuánto te apetece trastear después.",
+    rant:"Instalar Windows lleva una hora. Quitarle los anuncios, la telemetría y los programas que no pediste, otras tres.",
+    opts:[
+      {t:"Nada: lo quiero listo para usar hoy", s:"Instalar y a trabajar.", w:{mint:2, ubuntu:2, zorin:2, bazzite:2, linuxlite:1, elementary:1, pop:1}, d:{cinnamon:2, gnome:1, kde:1, budgie:1}, maxDiff:3},
+      {t:"Una tarde, para dejarlo a mi gusto", s:"Fondo, programas y listo.", w:{fedora:2, kubuntu:1, pop:1, manjaro:1, opensuse:1, cachyos:1}, d:{kde:2, gnome:1, cosmic:1}},
+      {t:"Unos días, aprendiendo sobre la marcha", s:"Me gusta ir descubriendo cosas.", w:{endeavour:2, cachyos:2, opensuse:2, manjaro:1, garuda:1, fedora:1, debian:1}, d:{hyprland:2, kde:1, niri:1, tiling:1}, unlock:4},
+      {t:"Lo que haga falta: el camino es parte de la diversión", s:"Instalarlo a mano también cuenta como hobby.", w:{arch:3, gentoo:3, nixos:2, void:2, slackware:2, alpine:1}, d:{hyprland:2, tiling:2, dwm:2, bspwm:2, awesome:1, qtile:1, niri:1}, unlock:5}
+    ]
+  },
+  {
     q:"En Windows, ¿cómo sueles tener las ventanas?",
     help:"Piensa en cómo trabajas ahora, no en cómo te gustaría.",
     rant:"En Windows 11, poner dos ventanas lado a lado consiste en pasar el ratón sobre el botón de maximizar, esperar al menú y apuntar bien. Productividad.",
@@ -1231,10 +1257,18 @@ function picks(){
   return out;
 }
 /* Quien nunca ha usado la consola no recibe opciones de dificultad alta, salvo que el hardware no deje otra. */
-function maxDiff(){ return Math.min(9, ...picks().map(p => p.o.maxDiff || 9)); }
+/* Límite de dificultad: lo bajan respuestas como «nunca he usado la consola»
+   y lo suben las de quien busca algo distinto o un reto («unlock»). */
+function maxDiff(){
+  const P = picks();
+  const cap = Math.min(9, ...P.map(p => p.o.maxDiff || 9));
+  const unlock = Math.max(0, ...P.map(p => p.o.unlock || 0));
+  return Math.max(cap, unlock);
+}
+function wantsChallenge(){ return picks().some(p => (p.o.unlock || 0) >= 4); }
 function capDiff(keys, items){ const md = maxDiff(); const f = keys.filter(k => items[k].diff <= md); return f.length ? f : keys; }
 
-function ranking(){
+function ranking(ignoreCap){
   const score = {}, ITEMS_ = ITEMS(), QS_ = QS(), MAX_ = MAX;
   Object.keys(ITEMS_).forEach(k => score[k] = 0);
   const P = picks();
@@ -1245,7 +1279,7 @@ function ranking(){
     if (o.only) allowed = allowed.filter(k => o.only.includes(k));
     if (o.exclude) allowed = allowed.filter(k => !o.exclude.includes(k));
   });
-  allowed = capDiff(allowed, ITEMS_);
+  if (!ignoreCap) allowed = capDiff(allowed, ITEMS_);
   const list = allowed.map(k => {
     const ratio = MAX_[k] ? score[k] / MAX_[k] : 0;
     return {k, score:score[k], ratio};
@@ -1262,17 +1296,57 @@ function ranking(){
 }
 
 /* Escritorio: puntos de las respuestas + bonus si la distro elegida lo trae o lo recomienda. */
-function deRanking(dk){
+function deRanking(dk, ignoreCap){
   const score = {};
   Object.keys(DES).forEach(k => score[k] = DES[k].distros.includes(dk) ? DE_BONUS : 0);
   picks().forEach(({o, f}) => { const d = o.d || {}; for (const k in d) score[k] += d[k] * f; });
-  const list = capDiff(Object.keys(DES), DES).map(k => ({k, score:score[k], ratio: MAX_DE[k] ? score[k] / MAX_DE[k] : 0}));
+  const list = (ignoreCap ? Object.keys(DES) : capDiff(Object.keys(DES), DES)).map(k => ({k, score:score[k], ratio: MAX_DE[k] ? score[k] / MAX_DE[k] : 0}));
   list.sort((a, b) => b.score - a.score || b.ratio - a.ratio);
   const top = list[0].score || 1;
   list.forEach(d => { d.pct = Math.max(12, Math.min(99, Math.round(48 + 30 * d.ratio + 21 * d.score / top))); });
   for (let i = 1; i < list.length; i++) if (list[i].pct >= list[i-1].pct) list[i].pct = list[i-1].pct - 1;
   return list;
 }
+/* Tarjeta «algo distinto»: si el combo es cómodo, propone un paso más allá;
+   si ya es un reto, un plan B tranquilo. */
+const DE_STYLE = {gnome:"moderno", pantheon:"moderno", cosmic:"mosaico", hyprland:"mosaico", niri:"mosaico", tiling:"mosaico", awesome:"mosaico", bspwm:"mosaico", dwm:"mosaico", qtile:"mosaico"};
+const deStyle = k => DE_STYLE[k] || "clasico";
+function family(k){ const b = DISTROS[k].base; return b.startsWith("Independiente") ? k : b.split(/[ (]/)[0].toLowerCase(); }
+function stretchPick(dk, ek){
+  const D = DISTROS[dk], E = DES[ek];
+  const all = ranking(true);
+  // Solo parejas coherentes: el escritorio propuesto lo trae o lo recomienda esa distro.
+  const pairFor = (c, ok) => deRanking(c, true).find(r => DES[r.k].distros.includes(c) && ok(r.k));
+  const calm = D.diff >= 4 || E.diff >= 4;
+  const cands = calm
+    ? all.filter(r => r.k !== dk && DISTROS[r.k].diff <= 2)
+    : [...all.filter(r => r.k !== dk && family(r.k) !== family(dk) && DISTROS[r.k].diff > D.diff && DISTROS[r.k].diff <= D.diff + 2),
+       ...all.filter(r => r.k !== dk && family(r.k) !== family(dk))];
+  for (const c of cands){
+    const de = calm ? pairFor(c.k, k => DES[k].diff <= 2)
+                    : pairFor(c.k, k => k !== ek && deStyle(k) !== deStyle(ek) && DES[k].diff <= E.diff + 2);
+    if (de) return {calm, dk:c.k, ek:de.k};
+  }
+  return null;
+}
+function stretchHTML(dk, ek){
+  const st = stretchPick(dk, ek);
+  if (!st) return "";
+  const D = DISTROS[st.dk], E = DES[st.ek];
+  return `
+      <div class="stretch">
+        <span class="eyebrow">${st.calm ? "¿Te da vértigo? Plan B más tranquilo" : "¿Y si pruebas algo distinto?"}</span>
+        <div class="combo-row">
+          <button class="de-distro st-d" type="button" data-k="${st.dk}" style="--d-bg:${D.bg}; --d-fg:${D.fg}"><span class="mini${logoCls(st.dk)}" aria-hidden="true">${logo(st.dk)}</span><span>${esc(D.name)}</span></button>
+          <span class="combo-plus sm" aria-hidden="true">+</span>
+          <button class="de-distro st-e" type="button" data-k="${st.ek}" style="--d-bg:${E.bg}; --d-fg:${E.fg}"><span class="mini${logoCls(st.ek)}" aria-hidden="true">${logo(st.ek)}</span><span>${esc(E.name)}</span></button>
+        </div>
+        <p>${st.calm
+          ? `Tu combo es de los que cuestan al principio. Si prefieres empezar con algo que funcione desde el primer minuto, esta pareja también encaja con tus respuestas, y siempre puedes saltar al reto más adelante.`
+          : `Tu combo encaja con lo que ya conoces. Si te apetece descubrir otra forma de usar el ordenador, esta pareja es un paso más allá sin tirarte a la piscina. Pulsa en cada uno para ver su ficha y una captura.`}</p>
+      </div>`;
+}
+
 const LOCKED = ["tails", "qubes", "puppy", "elementary", "zorin", "asahi"];
 function comboNote(dk, ek){
   const D = DISTROS[dk], E = DES[ek];
@@ -1296,7 +1370,7 @@ function renderIntro(){
         <p>Comparamos tus respuestas con ${N} distribuciones y ${nDE} escritorios. Al final verás tu combo, por ejemplo «Fedora + GNOME» o «Arch + Hyprland», con capturas, fichas y el enlace a la descarga oficial.</p>
         <div class="cta-row">
           <button class="btn btn-primary" id="startStage" type="button">Empezar <span aria-hidden="true">→</span></button>
-          <span class="cta-meta">Unos 3 minutos · puedes volver atrás</span>
+          <span class="cta-meta">Unos 4 minutos · puedes volver atrás</span>
         </div>
       </div>
       <div class="facts">
@@ -1423,6 +1497,7 @@ function renderResult(idx){
           </a>
         </div>
         <p class="combo-note">${esc(comboNote(pickd.k, dePick.k))}</p>
+        ${wantsChallenge() && D.diff >= 4 ? `<p class="combo-note challenge">Te has apuntado al reto: ${esc(D.name)} cuesta al principio, pero vas a aprender muchísimo. Empieza por la guía de instalación de más abajo y tómatelo con calma.</p>` : ""}
       </div>
 
       <section class="res-sec" id="res-distro">
@@ -1482,6 +1557,8 @@ function renderResult(idx){
         </div>
       </div>
 
+      ${stretchHTML(pickd.k, dePick.k)}
+
       <div class="q-nav">
         <button class="linkbtn" type="button" id="again">↺ Repetir el test</button>
         <button class="linkbtn" type="button" id="toDEs">Ver todos los escritorios →</button>
@@ -1491,6 +1568,8 @@ function renderResult(idx){
   stage.querySelectorAll(".de-alt").forEach(b => b.addEventListener("click", () => { renderDEDetail(b.dataset.k); scrollToStage(); }));
   stage.querySelectorAll(".combo-part").forEach(a => a.addEventListener("click", e => { e.preventDefault(); document.querySelector(a.getAttribute("href")).scrollIntoView({behavior: reduce ? "auto" : "smooth"}); }));
   document.getElementById("deFull").addEventListener("click", () => { renderDEDetail(dePick.k); scrollToStage(); });
+  stage.querySelectorAll(".st-d").forEach(b => b.addEventListener("click", () => { renderDetail(b.dataset.k); scrollToStage(); }));
+  stage.querySelectorAll(".st-e").forEach(b => b.addEventListener("click", () => { renderDEDetail(b.dataset.k); scrollToStage(); }));
   document.getElementById("again").addEventListener("click", reset);
   document.getElementById("toDEs").addEventListener("click", () => { renderDEExplore(); scrollToStage(); });
   bindFicha(`Mi combo de Linux según el Distrómetro: ${D.name} + ${E.name}. Windows, no eres tú, soy yo. Bueno, eres tú. Descubre el tuyo: ${SHARE_BASE}`);
