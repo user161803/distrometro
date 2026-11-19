@@ -231,10 +231,31 @@ p{margin:0}
 .alt-list{display:grid; grid-template-columns:1fr 1fr; gap:12px}
 .alt{appearance:none; cursor:pointer; text-align:left; font:inherit; color:var(--ink); background:var(--surface-2); border:1.5px solid var(--line); border-radius:var(--r); padding:14px; display:grid; grid-template-columns:44px 1fr auto; gap:12px; align-items:center; transition:border-color .15s ease}
 .alt:hover{border-color:var(--ink)}
-.alt .mini{width:44px; height:44px; border-radius:12px; display:grid; place-items:center; overflow:hidden; font-family:var(--f-display); font-weight:800; font-size:.95rem; background:var(--d-bg); color:var(--d-fg)}
+.mini{width:44px; height:44px; border-radius:12px; display:grid; place-items:center; overflow:hidden; font-family:var(--f-display); font-weight:800; font-size:.95rem; background:var(--d-bg); color:var(--d-fg)}
 .alt b{display:block; font-weight:600}
 .alt small{color:var(--muted); font-size:.82rem; display:block; line-height:1.35}
 .alt .pct{font-family:var(--f-mono); font-size:.85rem; font-variant-numeric:tabular-nums; color:var(--muted)}
+.explore-row{display:flex; justify-content:center; align-items:center; gap:14px; flex-wrap:wrap; margin-top:22px}
+.catalog{display:flex; flex-direction:column; gap:28px}
+.cat-head{display:flex; justify-content:space-between; align-items:flex-end; gap:20px; flex-wrap:wrap}
+.cat-title{display:flex; flex-direction:column; gap:10px; min-width:0; max-width:36em}
+.cat-title h2{font-size:clamp(1.6rem, 3.2vw, 2.3rem); font-weight:700}
+.cat-title p{color:var(--muted)}
+.chips{display:flex; gap:8px; flex-wrap:wrap}
+.chip{appearance:none; cursor:pointer; font:inherit; font-size:.9rem; font-weight:500; padding:8px 14px; border-radius:999px; border:1.5px solid var(--line); background:var(--surface); color:var(--ink); transition:border-color .15s ease}
+.chip span{font-family:var(--f-mono); font-size:.78rem; color:var(--muted); margin-left:4px}
+.chip:hover{border-color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink); border-color:var(--ink); color:var(--bg)}
+.chip[aria-pressed="true"] span{color:var(--bg); opacity:.7}
+.dgrid{display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:12px}
+.dcard{appearance:none; cursor:pointer; text-align:left; font:inherit; color:var(--ink); background:var(--surface-2); border:1.5px solid var(--line); border-radius:var(--r); padding:16px; display:grid; grid-template-columns:48px minmax(0, 1fr); gap:14px; align-items:start; transition:border-color .15s ease, transform .15s ease}
+.dcard:hover{border-color:var(--ink); transform:translateY(-2px)}
+.dcard .mini{width:48px; height:48px}
+.dcard b{display:block; font-weight:600; font-size:1.02rem; line-height:1.3}
+.dcard small{display:block; color:var(--muted); font-size:.86rem; line-height:1.4; margin-top:3px}
+.dcard .meta{display:flex; align-items:center; gap:8px; margin-top:10px; font-family:var(--f-mono); font-size:.74rem; color:var(--muted)}
+.diff.sm{gap:3px; margin-right:0; flex-shrink:0}
+.diff.sm i{width:10px; height:5px; border-radius:2px}
 .toast{font-family:var(--f-mono); font-size:.82rem; color:var(--muted)}
 
 .fade{animation:fadeup .35s ease both}
@@ -269,10 +290,11 @@ footer code{font-family:var(--f-mono); font-size:.82rem}
   .hero .wrap{grid-template-columns:1fr; gap:36px}
   .duel{max-width:520px}
   .intro, .q, .res-grid{grid-template-columns:minmax(0, 1fr)}
+  .dgrid{grid-template-columns:repeat(2, minmax(0, 1fr))}
   .gripes{grid-template-columns:repeat(2, minmax(0,1fr))}
 }
 @media (max-width: 620px){
-  .gripes, .alt-list{grid-template-columns:1fr}
+  .gripes, .alt-list, .dgrid{grid-template-columns:minmax(0, 1fr)}
   .facts{grid-template-columns:repeat(3, minmax(0,1fr)); gap:8px}
   .fact{padding:12px}
   .fact b{font-size:1.35rem}
@@ -336,6 +358,10 @@ footer code{font-family:var(--f-mono); font-size:.82rem}
         <span class="mono">sin telemetría, prometido</span>
       </div>
       <div class="stage-body" id="stage" aria-live="polite"></div>
+    </div>
+    <div class="explore-row" id="exploreRow">
+      <span class="cta-meta">¿Prefieres curiosear sin responder nada?</span>
+      <button class="btn btn-ghost" type="button" id="exploreBtn"><span>Explorar las <span id="exploreCount">23</span> distros</span> <span aria-hidden="true">→</span></button>
     </div>
   </div>
 </section>
@@ -700,6 +726,7 @@ let cur = 0;
 let view = "intro";
 let timers = [];
 const stage = document.getElementById("stage");
+const exploreRow = document.getElementById("exploreRow");
 const head = document.getElementById("stageHead");
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -735,7 +762,7 @@ function setHead(html){ head.innerHTML = html; }
 function defaultHead(){ setHead('<span class="mono">distrometro --modo=interactivo</span><span class="mono">sin telemetría, prometido</span>'); }
 
 function renderIntro(){
-  view = "intro"; clearTimers(); defaultHead();
+  view = "intro"; clearTimers(); defaultHead(); exploreRow.hidden = false;
   stage.innerHTML = `
     <div class="intro fade">
       <div class="intro-copy">
@@ -757,7 +784,7 @@ function renderIntro(){
 }
 
 function renderQuestion(focusFirst){
-  view = "q"; clearTimers();
+  view = "q"; clearTimers(); exploreRow.hidden = false;
   const Q = QUESTIONS[cur];
   const pct = Math.round(cur / QUESTIONS.length * 100);
   setHead(`<div class="progress"><span class="mono">Instalando libertad</span><span class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="${QUESTIONS.length}" aria-valuenow="${cur}" aria-label="Progreso del test"><i style="width:${pct}%"></i></span><span class="mono">${pct}%</span></div><span class="mono">sin pantallazos azules</span>`);
@@ -824,7 +851,7 @@ function renderLoading(){
 }
 
 function renderResult(idx){
-  view = "result"; clearTimers();
+  view = "result"; clearTimers(); exploreRow.hidden = false;
   const rank = ranking();
   const pickd = rank[idx];
   const D = DISTROS[pickd.k];
@@ -833,45 +860,7 @@ function renderResult(idx){
   setHead(`<span class="mono">${isWinner ? "Resultado: tu distro perfecta" : "Viendo alternativa"}</span><span class="mono">reinicio necesario: no</span>`);
   stage.innerHTML = `
     <div class="result fade" style="--d-bg:${D.bg}; --d-fg:${D.fg}">
-      <div class="res-head">
-        <div class="badge${logoCls(pickd.k)}" aria-hidden="true">${logo(pickd.k)}</div>
-        <div class="res-title">
-          <span class="eyebrow">${isWinner ? "Tu distro perfecta es" : `Tu opción nº ${idx + 1}`}</span>
-          <h2>${esc(D.name)}</h2>
-          <p class="tag">${esc(D.tagline)}</p>
-        </div>
-        <div class="match"><b>${pickd.pct}%</b><span>de compatibilidad</span></div>
-      </div>
-
-      <div class="res-grid">
-        <div class="res-text">
-          <h3>Cómo es</h3>
-          <p>${esc(D.desc)}</p>
-          <h3>Por qué encaja contigo</h3>
-          <p>${esc(D.why)}</p>
-          <div class="rant">
-            <span class="rant-label">Lo que Windows nunca te dio</span>
-            <p>${esc(D.vs)}</p>
-          </div>
-          <div class="res-cta">
-            <a class="btn btn-primary" href="${D.url}" target="_blank" rel="noopener noreferrer">Descargar la ISO de ${esc(D.name)} <span aria-hidden="true">↗</span></a>
-            <button class="btn btn-ghost" type="button" id="copyRes">Copiar resultado</button>
-            <span class="toast" id="toast" role="status"></span>
-          </div>
-        </div>
-        <div class="res-text">
-          <h3>Ficha técnica</h3>
-          <dl class="specs">
-            <div><dt>Basada en</dt><dd>${esc(D.base)}</dd></div>
-            <div><dt>Escritorio</dt><dd>${esc(D.desktop)}</dd></div>
-            <div><dt>Paquetes</dt><dd>${esc(D.pkg)}</dd></div>
-            <div><dt>Lanzamientos</dt><dd>${esc(D.cycle)}</dd></div>
-            <div><dt>Dificultad</dt><dd><span class="diff" aria-hidden="true">${[1,2,3,4,5].map(n => `<i class="${n <= D.diff ? "on" : ""}"></i>`).join("")}</span>${D.diff} de 5</dd></div>
-          </dl>
-          <h3>Tu primer comando</h3>
-          <div class="cmd"><span class="p">$</span><span>${esc(D.cmd)}</span></div>
-        </div>
-      </div>
+      ${fichaHTML(pickd.k, isWinner ? "Tu distro perfecta es" : `Tu opción nº ${idx + 1}`, pickd.pct)}
 
       <div class="alts">
         <h3>${isWinner ? "También te irían bien" : "Otras opciones"}</h3>
@@ -902,11 +891,124 @@ function renderResult(idx){
   });
 }
 
+function fichaHTML(k, eyebrow, pct){
+  const D = DISTROS[k];
+  const quiz = pct != null;
+  return `
+      <div class="res-head">
+        <div class="badge${logoCls(k)}" aria-hidden="true">${logo(k)}</div>
+        <div class="res-title">
+          <span class="eyebrow">${esc(eyebrow)}</span>
+          <h2>${esc(D.name)}</h2>
+          <p class="tag">${esc(D.tagline)}</p>
+        </div>
+        ${quiz ? `<div class="match"><b>${pct}%</b><span>de compatibilidad</span></div>` : `<div class="match"><b>${D.diff}/5</b><span>de dificultad</span></div>`}
+      </div>
+
+      <div class="res-grid">
+        <div class="res-text">
+          <h3>Cómo es</h3>
+          <p>${esc(D.desc)}</p>
+          <h3>${quiz ? "Por qué encaja contigo" : "¿Es para ti?"}</h3>
+          <p>${esc(D.why)}</p>
+          <div class="rant">
+            <span class="rant-label">Lo que Windows nunca te dio</span>
+            <p>${esc(D.vs)}</p>
+          </div>
+          <div class="res-cta">
+            <a class="btn btn-primary" href="${D.url}" target="_blank" rel="noopener noreferrer">Descargar la ISO de ${esc(D.name)} <span aria-hidden="true">↗</span></a>
+            ${quiz ? `<button class="btn btn-ghost" type="button" id="copyRes">Copiar resultado</button>
+            <span class="toast" id="toast" role="status"></span>` : ""}
+          </div>
+        </div>
+        <div class="res-text">
+          <h3>Ficha técnica</h3>
+          <dl class="specs">
+            <div><dt>Basada en</dt><dd>${esc(D.base)}</dd></div>
+            <div><dt>Escritorio</dt><dd>${esc(D.desktop)}</dd></div>
+            <div><dt>Paquetes</dt><dd>${esc(D.pkg)}</dd></div>
+            <div><dt>Lanzamientos</dt><dd>${esc(D.cycle)}</dd></div>
+            <div><dt>Dificultad</dt><dd>${diffBar(D.diff)}${D.diff} de 5</dd></div>
+          </dl>
+          <h3>Tu primer comando</h3>
+          <div class="cmd"><span class="p">$</span><span>${esc(D.cmd)}</span></div>
+        </div>
+      </div>`;
+}
+function diffBar(n, sm){ return `<span class="diff${sm ? " sm" : ""}" aria-hidden="true">${[1,2,3,4,5].map(i => `<i class="${i <= n ? "on" : ""}"></i>`).join("")}</span>`; }
+
+/* ================= Catálogo ================= */
+const FILTERS = [
+  {id:"all", label:"Todas", test:() => true},
+  {id:"easy", label:"Para empezar", test:d => d.diff === 1},
+  {id:"mid", label:"Intermedias", test:d => d.diff >= 2 && d.diff <= 3},
+  {id:"adv", label:"Para valientes", test:d => d.diff >= 4}
+];
+let filter = "all";
+const CATALOG = Object.keys(DISTROS).sort((a, b) => DISTROS[a].diff - DISTROS[b].diff || DISTROS[a].name.localeCompare(DISTROS[b].name, "es"));
+
+function renderExplore(focusKey){
+  view = "explore"; clearTimers(); exploreRow.hidden = true;
+  const F = FILTERS.find(f => f.id === filter);
+  const list = CATALOG.filter(k => F.test(DISTROS[k]));
+  setHead(`<span class="mono">ls /distros --filtro=${filter}</span><span class="mono">${list.length} resultados</span>`);
+  stage.innerHTML = `
+    <div class="catalog fade">
+      <div class="cat-head">
+        <div class="cat-title">
+          <span class="eyebrow">Catálogo completo</span>
+          <h2>Las ${N} distros del Distrómetro</h2>
+          <p>Ordenadas de más fácil a más exigente. Pulsa una para ver su ficha y el enlace de descarga.</p>
+        </div>
+        <div class="chips" role="group" aria-label="Filtrar por dificultad">
+          ${FILTERS.map(f => `<button class="chip" type="button" id="chip-${f.id}" data-f="${f.id}" aria-pressed="${f.id === filter}">${f.label} <span>${CATALOG.filter(k => f.test(DISTROS[k])).length}</span></button>`).join("")}
+        </div>
+      </div>
+      <div class="dgrid">
+        ${list.map(k => { const D = DISTROS[k]; return `
+          <button class="dcard" type="button" data-k="${k}" id="dcard-${k}" style="--d-bg:${D.bg}; --d-fg:${D.fg}">
+            <span class="mini${logoCls(k)}" aria-hidden="true">${logo(k)}</span>
+            <span><b>${esc(D.name)}</b><small>${esc(D.tagline)}</small>
+              <span class="meta">${diffBar(D.diff, true)}<span>${esc(D.base)}</span></span></span>
+          </button>`; }).join("")}
+      </div>
+      <div class="q-nav">
+        <button class="linkbtn" type="button" id="toQuiz">← Volver al test</button>
+        <button class="linkbtn" type="button" id="toWall2">Leer el muro de quejas de Windows ↓</button>
+      </div>
+    </div>`;
+  stage.querySelectorAll(".chip").forEach(c => c.addEventListener("click", () => { filter = c.dataset.f; renderExplore(); document.getElementById("chip-" + filter).focus({preventScroll:true}); }));
+  stage.querySelectorAll(".dcard").forEach(c => c.addEventListener("click", () => { renderDetail(c.dataset.k); scrollToStage(); }));
+  document.getElementById("toQuiz").addEventListener("click", reset);
+  document.getElementById("toWall2").addEventListener("click", () => document.getElementById("quejas").scrollIntoView({behavior: reduce ? "auto" : "smooth"}));
+  if (focusKey){ const el = document.getElementById("dcard-" + focusKey); el && el.focus({preventScroll:true}); }
+}
+
+function renderDetail(k){
+  view = "detail"; clearTimers(); exploreRow.hidden = true;
+  const D = DISTROS[k];
+  const i = CATALOG.indexOf(k);
+  const next = CATALOG[(i + 1) % CATALOG.length];
+  setHead(`<span class="mono">cat /distros/${k}</span><span class="mono">${i + 1} de ${N}</span>`);
+  stage.innerHTML = `
+    <div class="result fade" style="--d-bg:${D.bg}; --d-fg:${D.fg}">
+      ${fichaHTML(k, "Explorando el catálogo")}
+      <div class="q-nav">
+        <button class="linkbtn" type="button" id="backCat">← Volver al catálogo</button>
+        <button class="linkbtn" type="button" id="nextCat">Siguiente: ${esc(DISTROS[next].name)} →</button>
+      </div>
+    </div>`;
+  document.getElementById("backCat").addEventListener("click", () => { renderExplore(k); scrollToStage(); });
+  document.getElementById("nextCat").addEventListener("click", () => { renderDetail(next); scrollToStage(); });
+}
+
 function scrollToStage(){ document.getElementById("test").scrollIntoView({behavior: reduce ? "auto" : "smooth", block:"start"}); }
 function start(scroll){ answers = new Array(QUESTIONS.length).fill(null); cur = 0; renderQuestion(true); if (scroll) scrollToStage(); }
 function reset(){ answers = new Array(QUESTIONS.length).fill(null); cur = 0; renderIntro(); scrollToStage(); }
 
 document.getElementById("startHero").addEventListener("click", () => start(true));
+document.getElementById("exploreBtn").addEventListener("click", () => { renderExplore(); scrollToStage(); });
+document.getElementById("exploreCount").textContent = N;
 document.getElementById("startWall").addEventListener("click", e => { e.preventDefault(); start(true); });
 document.addEventListener("keydown", e => {
   if (view !== "q" || e.altKey || e.ctrlKey || e.metaKey) return;
