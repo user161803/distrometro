@@ -1,8 +1,15 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Test humorístico de 8 preguntas que te recomienda tu distro de Linux ideal y se queja sin piedad de Windows.">
 <title>Distrómetro</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>body{margin:0} img{max-width:100%} [hidden]{display:none!important} :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
 <style>
 /* Layout: una columna editorial; hero a dos columnas (titular | ventanas "Windows Update vs. terminal"),
    un "escenario" central donde vive el test y el resultado, y un muro de quejas en azul pantallazo. */
@@ -277,7 +284,8 @@ footer code{font-family:var(--f-mono); font-size:.82rem}
   .top-note{display:none}
 }
 </style>
-
+</head>
+<body>
 <header class="top">
   <div class="wrap">
     <a class="brand" href="#" aria-label="Distrómetro, inicio"><span class="brand-mark">$_</span>Distrómetro</a>
@@ -937,3 +945,5 @@ setInterval(() => { const s = Math.floor((Date.now() - t0) / 1000); up.textConte
 renderIntro();
 })();
 </script>
+</body>
+</html>
