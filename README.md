@@ -11,3 +11,7 @@ xdg-open index.html
 ```
 
 Versión publicada: https://user161803.github.io/distrometro/
+
+## Créditos
+
+Los logos de las distribuciones proceden de [Simple Icons](https://simpleicons.org/) (CC0) y, en el caso de Bazzite, Ubuntu Studio y Linux Lite, de sus webs oficiales. Todas las marcas y logos pertenecen a sus respectivos propietarios.
