@@ -257,7 +257,7 @@ footer code{font-family:var(--f-mono); font-size:.82rem}
 @media (max-width: 920px){
   .hero .wrap{grid-template-columns:1fr; gap:36px}
   .duel{max-width:520px}
-  .intro, .q, .res-grid{grid-template-columns:1fr}
+  .intro, .q, .res-grid{grid-template-columns:minmax(0, 1fr)}
   .gripes{grid-template-columns:repeat(2, minmax(0,1fr))}
 }
 @media (max-width: 620px){
@@ -472,88 +472,189 @@ const DISTROS = {
     vs:"Si algo se rompe, eliges la generación anterior en el arranque. Sin formatear, sin «Reparación automática» en bucle.",
     base:"Independiente", desktop:"El que declares", pkg:"Nix (más de 100.000 paquetes)", cycle:"Semestral o unstable", diff:5,
     cmd:"sudo nixos-rebuild switch", url:"https://nixos.org/download/"
+  },
+  kubuntu: {
+    name:"Kubuntu", mono:"Ku", bg:"#0079C1", fg:"#FFFFFF",
+    tagline:"Ubuntu con KDE Plasma: todo lo bueno de Ubuntu y mil ajustes más.",
+    desc:"Kubuntu es Ubuntu con el escritorio KDE Plasma en lugar de GNOME. Plasma tiene barra de tareas abajo, menú de aplicaciones y bandeja del sistema, así que quien viene de Windows se orienta enseguida. Además se puede configurar casi todo: temas, paneles, atajos, efectos y widgets.",
+    why:"Quieres la comodidad de Ubuntu, con sus guías y foros, pero con un escritorio familiar que además puedas dejar exactamente a tu gusto.",
+    vs:"El menú contextual del clic derecho tiene todas las opciones a la vista. No hace falta pulsar «Mostrar más opciones».",
+    base:"Ubuntu", desktop:"KDE Plasma", pkg:"APT + Snap + Flatpak", cycle:"Cada 6 meses; LTS cada 2 años", diff:1,
+    cmd:"sudo apt install kdenlive", url:"https://kubuntu.org/getkubuntu/"
+  },
+  linuxlite: {
+    name:"Linux Lite", mono:"Li", bg:"#E8B23A", fg:"#241A02",
+    tagline:"Ligera, sencilla y pensada para quien huye de Windows.",
+    desc:"Linux Lite está diseñada para quien llega desde Windows con un ordenador modesto. Usa Xfce sobre Ubuntu LTS, trae un manual de ayuda propio muy claro y herramientas «Lite» para tareas como actualizar, instalar programas o hacer copias de seguridad. Funciona bien con poca RAM.",
+    why:"Tu ordenador no es nuevo y no quieres complicarte. Linux Lite es fácil desde el primer día y deja que un equipo veterano vuelva a ir con soltura.",
+    vs:"Arranca y está listo para usar. Nada de quedarse diez minutos con el disco al 100 % sin hacer nada.",
+    base:"Ubuntu LTS", desktop:"Xfce", pkg:"APT + Lite Software", cycle:"Sigue las LTS de Ubuntu", diff:1,
+    cmd:"sudo apt install libreoffice", url:"https://www.linuxliteos.com/download.php"
+  },
+  ubuntustudio: {
+    name:"Ubuntu Studio", mono:"US", bg:"#1F2A44", fg:"#8EC5FF",
+    tagline:"Un estudio de música, vídeo y diseño, listo al instalar.",
+    desc:"Ubuntu Studio es Ubuntu con KDE Plasma preparado para crear. Trae un kernel ajustado para audio con baja latencia, PipeWire y JACK configurados, y una colección de programas de producción: Ardour, Kdenlive, Krita, GIMP, Inkscape, Blender, Darktable y muchos más.",
+    why:"Haces música, editas vídeo, diseñas o fotografías. Ubuntu Studio te ahorra días de configuración y te deja un sistema que no mete latencia en tu tarjeta de sonido.",
+    vs:"Ninguna suscripción mensual para usar tus programas de edición. Todo lo que trae es libre y gratuito.",
+    base:"Ubuntu", desktop:"KDE Plasma", pkg:"APT + Flatpak", cycle:"Cada 6 meses; LTS cada 2 años", diff:2,
+    cmd:"ubuntustudio-installer", url:"https://ubuntustudio.org/download/"
+  },
+  endeavour: {
+    name:"EndeavourOS", mono:"En", bg:"#5B5FD6", fg:"#FFFFFF",
+    tagline:"Arch Linux sin la instalación a mano, con una comunidad encantadora.",
+    desc:"EndeavourOS es Arch con un instalador gráfico y poco más. Usa los repositorios de Arch directamente, sin retrasos, y añade un par de utilidades de bienvenida. Al terminar tienes un Arch casi puro, con la AUR disponible y el escritorio que elijas al instalar.",
+    why:"Quieres Arch de verdad, con su wiki y sus paquetes al día, pero prefieres dedicar la tarde a personalizarlo en lugar de a instalarlo desde una terminal.",
+    vs:"Nadie te obliga a crear una cuenta en la nube para usar tu propio ordenador. Ni durante la instalación, ni después.",
+    base:"Arch Linux", desktop:"KDE Plasma, GNOME, Xfce y más", pkg:"Pacman + AUR (yay)", cycle:"Continuo (rolling)", diff:3,
+    cmd:"yay -Syu", url:"https://endeavouros.com/"
+  },
+  cachyos: {
+    name:"CachyOS", mono:"Ca", bg:"#1DD3A7", fg:"#04261E",
+    tagline:"Arch afinado para exprimir cada fotograma de tu procesador.",
+    desc:"CachyOS se basa en Arch y compila sus paquetes con optimizaciones para procesadores modernos (x86-64-v3 y v4). Trae kernels con planificadores pensados para que el sistema responda rápido, Btrfs con instantáneas y un instalador gráfico. Es muy popular entre quienes juegan en Linux.",
+    why:"Quieres sacarle todo el rendimiento al hardware, sobre todo para jugar, pero sin compilar nada tú. CachyOS ya viene afinado.",
+    vs:"Ningún proceso en segundo plano decide indexar tu disco justo cuando empiezas la partida.",
+    base:"Arch Linux", desktop:"KDE Plasma (y muchos más)", pkg:"Pacman + AUR con paquetes optimizados", cycle:"Continuo (rolling)", diff:3,
+    cmd:"sudo pacman -S cachyos-gaming-meta", url:"https://cachyos.org/download/"
+  },
+  almalinux: {
+    name:"AlmaLinux", mono:"Al", bg:"#082336", fg:"#FFB400",
+    tagline:"Un sistema de empresa, gratis, con más de diez años de soporte.",
+    desc:"AlmaLinux es compatible a nivel binario con Red Hat Enterprise Linux y la mantiene una fundación sin ánimo de lucro. Cada versión mayor recibe actualizaciones durante unos diez años. Es una opción muy habitual para servidores, laboratorios y equipos que tienen que funcionar sin sorpresas.",
+    why:"Montas servicios que deben funcionar años sin tocarlos, o quieres aprender el entorno que usan las empresas. AlmaLinux te da eso sin pagar licencias.",
+    vs:"Diez años de soporte por versión. Tu servidor no te dejará tirado porque una empresa decida que tu hardware ya no está de moda.",
+    base:"Compatible con RHEL", desktop:"GNOME (opcional; suele usarse sin escritorio)", pkg:"DNF (RPM)", cycle:"Versión mayor cada ~3 años, 10 años de soporte", diff:3,
+    cmd:"sudo dnf install podman", url:"https://almalinux.org/get-almalinux/"
+  },
+  kali: {
+    name:"Kali Linux", mono:"Ka", bg:"#367BF0", fg:"#FFFFFF",
+    tagline:"La navaja suiza de la seguridad informática. Úsala con permiso.",
+    desc:"Kali es la distro de referencia para auditorías de seguridad y pruebas de penetración. Trae cientos de herramientas preinstaladas: Nmap, Wireshark, Burp Suite, Metasploit, Aircrack-ng y muchas más. Ojo: no está pensada como sistema para el día a día, sino como caja de herramientas profesional.",
+    why:"Te interesa la ciberseguridad, preparas certificaciones o haces CTF. Kali te da el laboratorio montado. Para el uso diario, combínala con alguna de tus alternativas en una máquina virtual o un USB.",
+    vs:"Aquí sí puedes ver qué conexiones abre cada programa. En Windows, buena suerte averiguando con quién habla tu PC a las tres de la mañana.",
+    base:"Debian testing", desktop:"Xfce (también KDE y GNOME)", pkg:"APT", cycle:"Continuo, con imágenes trimestrales", diff:4,
+    cmd:"sudo nmap -sV 192.168.1.0/24", url:"https://www.kali.org/get-kali/"
+  },
+  tails: {
+    name:"Tails", mono:"Ta", bg:"#56347C", fg:"#FFFFFF",
+    tagline:"Un sistema que arranca desde un USB y olvida todo al apagar.",
+    desc:"Tails es un sistema portátil centrado en la privacidad. Arranca desde un USB, envía todo el tráfico a través de la red Tor y no deja rastro en el ordenador. Al apagarlo se borra todo, salvo lo que guardes a propósito en su almacenamiento persistente cifrado.",
+    why:"La privacidad es lo primero para ti. Tails no sustituye a tu sistema principal, pero es la herramienta perfecta para cuando necesitas navegar o trabajar sin dejar huella.",
+    vs:"Al apagar, se olvida de todo. Windows recuerda hasta lo que escribiste en la barra de búsqueda hace tres años.",
+    base:"Debian", desktop:"GNOME", pkg:"APT (paquetes adicionales opcionales)", cycle:"Cada ~6 semanas", diff:2,
+    cmd:"torify curl https://check.torproject.org", url:"https://tails.net/install/"
+  },
+  void: {
+    name:"Void Linux", mono:"Vo", bg:"#478061", fg:"#FFFFFF",
+    tagline:"Independiente, minimalista y rapidísima. Sin systemd.",
+    desc:"Void es una distribución independiente, no deriva de ninguna otra. Usa runit en lugar de systemd, así que arranca en segundos, y su gestor de paquetes XBPS es rápido y sencillo. Es rolling release pero muy estable, y existe en versión con glibc y con musl.",
+    why:"Te gusta lo simple y entender cada pieza, y valoras un sistema ligero que hace exactamente lo que le pides y nada más.",
+    vs:"Arranca en el tiempo que tarda Windows en mostrar «Preparando Windows».",
+    base:"Independiente", desktop:"El que instales (la ISO trae Xfce)", pkg:"XBPS", cycle:"Continuo (rolling)", diff:4,
+    cmd:"sudo xbps-install -Su", url:"https://voidlinux.org/download/"
+  },
+  gentoo: {
+    name:"Gentoo", mono:"Ge", bg:"#DDDAEC", fg:"#3E3363",
+    tagline:"Compilas tu sistema entero. Tu CPU te lo agradecerá. Tu factura de luz, menos.",
+    desc:"Gentoo construye los paquetes desde el código fuente, ajustados a tu hardware y con solo las funciones que activas mediante las USE flags. Ofrece control total: eliges init, compilador, opciones de cada programa… Hoy también tiene paquetes binarios para acelerar la instalación.",
+    why:"Para ti el sistema operativo es un proyecto en sí mismo. Quieres control absoluto y no te importa invertir tiempo a cambio de un sistema hecho exactamente a tu medida.",
+    vs:"Tú decides qué hay en cada programa, hasta la última opción de compilación. En Windows ni siquiera eliges cuándo se instala una actualización.",
+    base:"Independiente", desktop:"El que compiles", pkg:"Portage (emerge)", cycle:"Continuo (rolling)", diff:5,
+    cmd:"sudo emerge --ask --update --deep @world", url:"https://www.gentoo.org/downloads/"
   }
 };
+const N = Object.keys(DISTROS).length;
 
 const QUESTIONS = [
   {
     q:"¿Qué relación tienes con la terminal?",
     rant:"Windows tiene tres terminales distintas (CMD, PowerShell y Terminal) y ninguna se pone de acuerdo con las otras en cómo se borra un archivo.",
     opts:[
-      {t:"¿La qué? ¿Lo de los hackers de película?", s:"Prefiero clics, gracias.", w:{mint:3, zorin:3, elementary:2, ubuntu:2, mx:1}},
-      {t:"Copio y pego comandos de foros y rezo", s:"A veces funciona.", w:{ubuntu:3, pop:2, mint:2, manjaro:2, bazzite:1, fedora:1}},
-      {t:"Me defiendo. Sé salir de vim (casi siempre)", s:"Esc, :q!, y respiro.", w:{fedora:3, debian:2, opensuse:2, manjaro:2, pop:1, mx:1}},
-      {t:"Vivo en ella. El ratón es decorativo", s:"Mis alias tienen alias.", w:{arch:3, nixos:3, debian:1, opensuse:1}}
+      {t:"¿La qué? ¿Lo de los hackers de película?", s:"Prefiero clics, gracias.", w:{mint:3, zorin:3, linuxlite:3, elementary:2, ubuntu:2, kubuntu:2, mx:1}},
+      {t:"Copio y pego comandos de foros y rezo", s:"A veces funciona.", w:{ubuntu:3, pop:2, mint:2, kubuntu:2, manjaro:2, bazzite:1, fedora:1, ubuntustudio:1, tails:1}},
+      {t:"Me defiendo. Sé salir de vim (casi siempre)", s:"Esc, :q!, y respiro.", w:{fedora:3, endeavour:3, cachyos:2, debian:2, opensuse:2, manjaro:2, almalinux:2, kali:1, pop:1, mx:1}},
+      {t:"Vivo en ella. El ratón es decorativo", s:"Mis alias tienen alias.", w:{arch:3, nixos:3, gentoo:3, void:3, kali:2, debian:1, opensuse:1}}
     ]
   },
   {
     q:"¿Qué ordenador vas a liberar?",
     rant:"Windows 11 exige TPM 2.0 y procesadores recientes. Millones de equipos que funcionan perfectamente se convierten en basura electrónica por decreto.",
     opts:[
-      {t:"Un portátil de hace 10 años", s:"Windows 11 me dijo que «no es compatible». Él tampoco me cae bien.", w:{mx:4, debian:2, mint:2}},
-      {t:"Un PC normal, de los que cumplen", s:"Ni lento ni un cohete.", w:{mint:2, ubuntu:2, zorin:2, fedora:1, elementary:2}},
-      {t:"Una bestia gamer con gráfica que suena a avión", s:"RGB incluido.", w:{bazzite:4, pop:2, manjaro:1, arch:1}},
-      {t:"Un portátil nuevo y reluciente", s:"Aún huele a plástico.", w:{fedora:3, ubuntu:2, pop:2, elementary:1, opensuse:1}}
+      {t:"Un portátil de hace 10 años", s:"Windows 11 me dijo que «no es compatible». Él tampoco me cae bien.", w:{mx:4, linuxlite:4, void:2, debian:2, mint:2}},
+      {t:"Un PC normal, de los que cumplen", s:"Ni lento ni un cohete.", w:{mint:2, ubuntu:2, zorin:2, kubuntu:2, elementary:2, fedora:1, endeavour:1}},
+      {t:"Una bestia gamer con gráfica que suena a avión", s:"RGB incluido.", w:{bazzite:4, cachyos:4, pop:2, manjaro:1, arch:1, gentoo:1}},
+      {t:"Un portátil nuevo y reluciente", s:"Aún huele a plástico.", w:{fedora:3, ubuntu:2, pop:2, kubuntu:1, elementary:1, opensuse:1, ubuntustudio:1}},
+      {t:"Un servidor o un PC viejo en un rincón", s:"Para tenerlo encendido 24/7.", w:{debian:3, almalinux:4, void:1, nixos:1}},
+      {t:"El de cualquiera: lo llevo en un USB", s:"Arranco donde me dejen.", w:{tails:4, kali:3, mx:1}}
     ]
   },
   {
     q:"¿Para qué lo vas a usar sobre todo?",
     rant:"Windows trae preinstalados juegos, noticias, el tiempo, un asistente de IA y una tienda. Lo que no trae es la opción de no tenerlos.",
     opts:[
-      {t:"Navegar, ofimática y series", s:"Lo normal de la vida.", w:{mint:3, zorin:3, elementary:2, ubuntu:2, mx:1}},
-      {t:"Jugar", s:"Steam abierto 24/7.", w:{bazzite:4, pop:3, manjaro:1}},
-      {t:"Programar y desarrollar", s:"Docker, Python, y mil pestañas.", w:{fedora:3, pop:2, arch:2, nixos:2, opensuse:2, ubuntu:1}},
-      {t:"Cacharrear, servidores, homelab", s:"Tengo una Raspberry en cada cajón.", w:{debian:4, nixos:2, arch:1, opensuse:1}}
+      {t:"Navegar, ofimática y series", s:"Lo normal de la vida.", w:{mint:3, zorin:3, linuxlite:3, kubuntu:2, elementary:2, ubuntu:2, mx:1}},
+      {t:"Jugar", s:"Steam abierto 24/7.", w:{bazzite:4, cachyos:4, pop:3, manjaro:2, endeavour:1}},
+      {t:"Programar y desarrollar", s:"Docker, Python, y mil pestañas.", w:{fedora:3, pop:2, arch:2, endeavour:2, nixos:2, opensuse:2, void:1, ubuntu:1}},
+      {t:"Crear: música, vídeo, foto o diseño", s:"Mi DAW es sagrado.", w:{ubuntustudio:5, fedora:1, kubuntu:1, pop:1}},
+      {t:"Cacharrear, servidores, homelab", s:"Tengo una Raspberry en cada cajón.", w:{debian:4, almalinux:4, nixos:2, void:1, arch:1, opensuse:1}},
+      {t:"Seguridad, auditorías o privacidad", s:"Hacking ético, siempre con permiso.", w:{kali:5, tails:4, debian:1, arch:1}}
     ]
   },
   {
     q:"¿Qué aspecto quieres que tenga tu escritorio?",
     rant:"En Windows 11 ya no puedes mover la barra de tareas a un lateral. Una función de 1995 eliminada en 2021. Progreso.",
     opts:[
-      {t:"Que se parezca a Windows, pero sin lo malo", s:"Barra abajo, menú a la izquierda.", w:{zorin:3, mint:3, mx:1}},
-      {t:"Elegante y minimalista, tipo Mac", s:"Sin pagar 2.000 € por él.", w:{elementary:4, fedora:1, pop:1}},
-      {t:"Moderno y limpio, con su propio estilo", s:"Sorpréndeme, pero con gusto.", w:{fedora:2, ubuntu:2, pop:2, bazzite:1}},
-      {t:"Lo voy a personalizar hasta el último píxel", s:"Mi escritorio, mis reglas.", w:{arch:3, manjaro:2, opensuse:2, nixos:1}}
+      {t:"Que se parezca a Windows, pero sin lo malo", s:"Barra abajo, menú a la izquierda.", w:{zorin:4, mint:3, kubuntu:2, linuxlite:2, mx:1}},
+      {t:"Elegante y minimalista, tipo Mac", s:"Sin pagar 2.000 € por él.", w:{elementary:4, zorin:2, fedora:1, pop:1}},
+      {t:"Moderno y limpio, con su propio estilo", s:"Sorpréndeme, pero con gusto.", w:{fedora:2, ubuntu:2, pop:2, bazzite:1, ubuntustudio:1, tails:1}},
+      {t:"Lo voy a personalizar hasta el último píxel", s:"Mi escritorio, mis reglas.", w:{arch:3, kubuntu:2, endeavour:2, manjaro:2, opensuse:2, cachyos:1, gentoo:1, void:1, nixos:1}},
+      {t:"¿Escritorio? Con una terminal me sobra", s:"El fondo de pantalla es negro y tiene un cursor.", w:{almalinux:3, gentoo:2, void:2, debian:2, kali:1, arch:1}}
     ]
   },
   {
     q:"¿Cómo te gustan las actualizaciones?",
     rant:"«Tu dispositivo se reiniciará en 15 minutos.» Lo dice mientras tienes abierta la presentación que no has guardado. Siempre ese día.",
     opts:[
-      {t:"Lo último de lo último, aunque algo explote", s:"Vivo en la versión beta de la vida.", w:{arch:3, opensuse:3, manjaro:1, fedora:1}},
-      {t:"Recientes, pero bien probadas", s:"Lo nuevo, cuando funcione.", w:{fedora:3, bazzite:2, pop:1, ubuntu:1}},
-      {t:"Estable como una roca. Que nada cambie en años", s:"Si funciona, no lo toques.", w:{debian:3, mint:2, mx:2, ubuntu:1}},
-      {t:"Me da igual, mientras no me interrumpan", s:"Que pasen en silencio y sin sustos.", w:{mint:2, zorin:2, elementary:2, bazzite:2, ubuntu:1}}
+      {t:"Lo último de lo último, aunque algo explote", s:"Vivo en la versión beta de la vida.", w:{arch:3, endeavour:3, opensuse:3, cachyos:2, void:2, gentoo:1, manjaro:1, fedora:1, kali:1}},
+      {t:"Recientes, pero bien probadas", s:"Lo nuevo, cuando funcione.", w:{fedora:3, manjaro:2, bazzite:2, pop:1, ubuntu:1, kubuntu:1, ubuntustudio:1}},
+      {t:"Estable como una roca. Que nada cambie en años", s:"Si funciona, no lo toques.", w:{debian:3, almalinux:3, mint:2, mx:2, linuxlite:1, ubuntu:1}},
+      {t:"Me da igual, mientras no me interrumpan", s:"Que pasen en silencio y sin sustos.", w:{mint:2, zorin:2, elementary:2, bazzite:2, linuxlite:1, kubuntu:1, ubuntu:1, tails:1}}
     ]
   },
   {
     q:"¿Qué es lo que más te saca de quicio de Windows?",
     rant:"Pregunta difícil: la lista es tan larga que tenemos un muro entero dedicado a ella. Más abajo, cuando termines.",
     opts:[
-      {t:"Que se reinicie cuando le da la gana", s:"Adiós, 47 pestañas.", w:{mint:2, debian:2, bazzite:2, nixos:1}},
-      {t:"La telemetría: siento que me observan", s:"Porque te observan.", w:{debian:3, arch:1, fedora:1, mx:1, nixos:1}},
-      {t:"Que vaya lento aunque no esté haciendo nada", s:"«Antimalware Service Executable», 40 % de CPU.", w:{mx:3, arch:1, debian:1, manjaro:1}},
-      {t:"Los anuncios en el menú Inicio. En el menú Inicio.", s:"Pagué una licencia para ver publicidad.", w:{elementary:2, zorin:2, mint:2, ubuntu:1, fedora:1}}
+      {t:"Que se reinicie cuando le da la gana", s:"Adiós, 47 pestañas.", w:{mint:2, debian:2, bazzite:2, almalinux:1, nixos:1}},
+      {t:"La telemetría: siento que me observan", s:"Porque te observan.", w:{tails:3, debian:3, kali:1, arch:1, fedora:1, mx:1, void:1, nixos:1}},
+      {t:"Que vaya lento aunque no esté haciendo nada", s:"«Antimalware Service Executable», 40 % de CPU.", w:{mx:3, linuxlite:2, cachyos:2, void:2, arch:1, debian:1, manjaro:1, gentoo:1}},
+      {t:"Los anuncios en el menú Inicio. En el menú Inicio.", s:"Pagué una licencia para ver publicidad.", w:{zorin:3, elementary:2, mint:2, kubuntu:1, ubuntu:1, fedora:1}},
+      {t:"Que el software creativo sea de suscripción", s:"Pagar cada mes por editar fotos de mis vacaciones.", w:{ubuntustudio:3, kubuntu:1, fedora:1}}
     ]
   },
   {
     q:"¿Qué filosofía va contigo?",
     rant:"La filosofía de Windows: tu ordenador es tuyo, pero la cuenta de Microsoft, el navegador por defecto y las actualizaciones las elegimos nosotros.",
     opts:[
-      {t:"Que funcione y punto", s:"No vine aquí a hacer política.", w:{ubuntu:2, mint:2, zorin:2, pop:2, bazzite:1}},
-      {t:"Software libre, los principios por delante", s:"Mis cuatro libertades no se tocan.", w:{debian:4, fedora:2}},
-      {t:"Hazlo tú mismo y entiende cada pieza", s:"Aprender es parte de la diversión.", w:{arch:4, nixos:1, manjaro:1, opensuse:1}},
-      {t:"Mi sistema es código: declarativo y reproducible", s:"Si no está en git, no existe.", w:{nixos:4, bazzite:1, fedora:1}}
+      {t:"Que funcione y punto", s:"No vine aquí a hacer política.", w:{ubuntu:2, mint:2, zorin:2, kubuntu:2, pop:2, linuxlite:1, ubuntustudio:1, bazzite:1}},
+      {t:"Software libre, los principios por delante", s:"Mis cuatro libertades no se tocan.", w:{debian:4, fedora:2, void:1}},
+      {t:"Hazlo tú mismo y entiende cada pieza", s:"Aprender es parte de la diversión.", w:{arch:4, gentoo:3, void:2, endeavour:2, nixos:1, manjaro:1, opensuse:1}},
+      {t:"Mi sistema es código: declarativo y reproducible", s:"Si no está en git, no existe.", w:{nixos:4, bazzite:1, fedora:1}},
+      {t:"Rendimiento máximo, hasta el último ciclo", s:"Compilado para mi CPU y para nadie más.", w:{gentoo:4, cachyos:4, void:1, arch:1}},
+      {t:"Privacidad y seguridad ante todo", s:"Confío en el código que puedo auditar.", w:{tails:4, kali:3, debian:1, almalinux:1}}
     ]
   },
   {
     q:"Algo se ha roto. ¿Qué haces?",
     rant:"Solución oficial de Windows: «Algo salió mal. Inténtalo de nuevo más tarde.» Más tarde, cuándo. De nuevo, qué. Salió mal, el qué.",
     opts:[
-      {t:"Llamo a mi sobrino", s:"Es el informático de la familia.", w:{mint:3, zorin:3, elementary:2, ubuntu:1}},
-      {t:"Busco el error en internet", s:"Alguien en 2014 tuvo el mismo problema.", w:{ubuntu:3, pop:2, manjaro:2, fedora:1}},
-      {t:"Me leo la wiki entera y disfruto el proceso", s:"Arreglarlo es la mitad de la gracia.", w:{arch:3, opensuse:1, debian:2}},
-      {t:"Vuelvo a la versión anterior y aquí no ha pasado nada", s:"Ctrl+Z para el sistema entero.", w:{nixos:3, opensuse:3, bazzite:2, fedora:1}}
+      {t:"Llamo a mi sobrino", s:"Es el informático de la familia.", w:{zorin:3, mint:3, linuxlite:2, elementary:2, kubuntu:1, ubuntu:1}},
+      {t:"Busco el error en internet", s:"Alguien en 2014 tuvo el mismo problema.", w:{ubuntu:3, pop:2, kubuntu:2, endeavour:2, manjaro:2, fedora:1, cachyos:1, ubuntustudio:1, kali:1}},
+      {t:"Me leo la wiki entera y disfruto el proceso", s:"Arreglarlo es la mitad de la gracia.", w:{arch:3, gentoo:3, void:2, debian:2, endeavour:1, opensuse:1}},
+      {t:"Vuelvo a la versión anterior y aquí no ha pasado nada", s:"Ctrl+Z para el sistema entero.", w:{nixos:3, opensuse:3, bazzite:2, cachyos:1, fedora:1}},
+      {t:"Apago, y al encender está como nuevo", s:"Nada persiste, nada se rompe.", w:{tails:4, kali:1}},
+      {t:"Abro un ticket y consulto la documentación oficial", s:"Como en la oficina, pero sin la oficina.", w:{almalinux:4, debian:1, opensuse:1}}
     ]
   }
 ];
@@ -571,7 +672,7 @@ const GRIPES = [
 ];
 
 /* ================= Estado ================= */
-const LETTERS = ["A","B","C","D"];
+const LETTERS = ["A","B","C","D","E","F"];
 let answers = new Array(QUESTIONS.length).fill(null);
 let cur = 0;
 let view = "intro";
@@ -618,7 +719,7 @@ function renderIntro(){
       <div class="intro-copy">
         <span class="eyebrow">Cómo funciona</span>
         <h2>Contesta con sinceridad. Aquí nadie vende tus respuestas.</h2>
-        <p>Comparamos tus respuestas con 13 distribuciones: desde las que parecen Windows hasta las que se configuran escribiendo código. Al final verás la ganadora, cómo es por dentro, por qué encaja contigo y el enlace a su descarga oficial.</p>
+        <p>Comparamos tus respuestas con ${N} distribuciones: desde las que parecen Windows hasta las que se configuran escribiendo código. Al final verás la ganadora, cómo es por dentro, por qué encaja contigo y el enlace a su descarga oficial.</p>
         <div class="cta-row">
           <button class="btn btn-primary" id="startStage" type="button">Empezar <span aria-hidden="true">→</span></button>
           <span class="cta-meta">Puedes volver atrás en cualquier pregunta</span>
@@ -626,7 +727,7 @@ function renderIntro(){
       </div>
       <div class="facts">
         <div class="fact"><b>8</b><span>preguntas</span></div>
-        <div class="fact"><b>13</b><span>distros candidatas</span></div>
+        <div class="fact"><b>${N}</b><span>distros candidatas</span></div>
         <div class="fact zero"><b>0</b><span>reinicios necesarios</span></div>
       </div>
     </div>`;
@@ -689,7 +790,7 @@ function renderLoading(){
     ['<span class="dim">[ 0.31s]</span> Desinstalando juego de caramelos preinstalado… <span class="ok">ok</span>', 750],
     ['<span class="dim">[ 0.48s]</span> Desactivando telemetría… <span class="ok">no había ninguna</span>', 1100],
     ['<span class="dim">[ 0.66s]</span> Buscando al asistente que nadie pidió… <span class="ok">no encontrado (bien)</span>', 1450],
-    ['<span class="dim">[ 0.81s]</span> Comparando con 13 distribuciones… <span class="ok">ok</span>', 1800],
+    [`<span class="dim">[ 0.81s]</span> Comparando con ${N} distribuciones… <span class="ok">ok</span>`, 1800],
     [`<span class="dim">[ 0.94s]</span> Coincidencia máxima: <span class="p">${esc(winner.name)}</span>`, 2150],
     ['<span class="dim">[ 0.95s]</span> Reinicio necesario: <span class="ok">no</span>', 2450]
   ];
@@ -789,7 +890,7 @@ document.addEventListener("keydown", e => {
   if (view !== "q" || e.altKey || e.ctrlKey || e.metaKey) return;
   const tag = (e.target.tagName || "").toLowerCase(); if (tag === "input" || tag === "textarea") return;
   const k = e.key.toUpperCase();
-  const idx = LETTERS.indexOf(k) >= 0 ? LETTERS.indexOf(k) : ["1","2","3","4"].indexOf(k);
+  const idx = LETTERS.indexOf(k) >= 0 ? LETTERS.indexOf(k) : ["1","2","3","4","5","6"].indexOf(k);
   if (idx >= 0){ e.preventDefault(); pick(idx); }
 });
 
